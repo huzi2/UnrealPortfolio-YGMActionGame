@@ -8,6 +8,9 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UInputMappingContext;
+class UInputAction;
+struct FInputActionValue;
 /**
  * 
  */
@@ -24,9 +27,48 @@ private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) final;
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	void MoveForward(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue& Value);
+	void Turn(const FInputActionValue& Value);
+	void LookUp(const FInputActionValue& Value);
+	void Attack();
+	void Smash();
+	void StopAnimation();
+
+private:
+	// Components
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USpringArmComponent* SpringArmComponent;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UCameraComponent* CameraComponent;
+
+	// Animations
+	UPROPERTY(EditDefaultsOnly, Category = "Animations")
+	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animations")
+	UAnimMontage* SmashMontage;
+
+	// Inputs
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputMappingContext* DefaultInputMappingContext;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* MoveForwardInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* MoveRightInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* TurnInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* LookUpInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* AttackInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SmashInputAction;
 };
