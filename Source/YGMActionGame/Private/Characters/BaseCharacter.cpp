@@ -3,7 +3,8 @@
 
 #include "Characters/BaseCharacter.h"
 
-ABaseCharacter::ABaseCharacter()
+ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjInit)
+	: Super(ObjInit)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }

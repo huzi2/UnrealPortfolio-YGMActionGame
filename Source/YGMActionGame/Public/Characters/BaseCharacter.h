@@ -12,7 +12,7 @@ class YGMACTIONGAME_API ABaseCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
-	ABaseCharacter();
+	ABaseCharacter(const FObjectInitializer& ObjInit);
 
 protected:
 	virtual void BeginPlay() override;

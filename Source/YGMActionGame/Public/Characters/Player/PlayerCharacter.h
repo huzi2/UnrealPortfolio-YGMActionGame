@@ -20,17 +20,23 @@ class YGMACTIONGAME_API APlayerCharacter : public ABaseCharacter
 	GENERATED_BODY()
 	
 private:
-	APlayerCharacter();
+	APlayerCharacter(const FObjectInitializer& ObjInit);
 
 private:
 	virtual void BeginPlay() final;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) final;
+
+public:
+	bool IsSprinting() const;
 
 private:
 	void MoveForward(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void LookUp(const FInputActionValue& Value);
+	void OnStartSprint();
+	void OnStopSprint();
+	void SpeedyMove();
 	void Attack();
 	void Smash();
 	void StopAnimation();
@@ -44,6 +50,12 @@ private:
 	UCameraComponent* CameraComponent;
 
 	// Animations
+	UPROPERTY(EditDefaultsOnly, Category = "Animations")
+	UAnimMontage* SprintStopMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animations")
+	UAnimMontage* SpeedyMoveMontage;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Animations")
 	UAnimMontage* AttackMontage;
 
@@ -67,8 +79,17 @@ private:
 	UInputAction* LookUpInputAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SprintInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SpeedyMoveInputAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* AttackInputAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* SmashInputAction;
+
+private:
+	bool bIsSprint;
 };
