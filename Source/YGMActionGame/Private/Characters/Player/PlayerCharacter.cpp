@@ -186,7 +186,8 @@ void APlayerCharacter::Attack()
 
 		{ ECharacterState::ECS_Attack1, { "Attack2", ECharacterState::ECS_Attack2 }},
 		{ ECharacterState::ECS_Attack2, { "Attack3", ECharacterState::ECS_Attack3 }},
-
+		{ ECharacterState::ECS_SmashAfterAttack1, { "Attack2", ECharacterState::ECS_Attack2 }},
+		{ ECharacterState::ECS_Smash3c, { "SmashAfterAttack1", ECharacterState::ECS_SmashAfterAttack1 }},
 	};
 
 	const std::pair<FName, ECharacterState>* AttackInfo = AttackInfo_Map.Find(CharacterState);
@@ -215,16 +216,18 @@ void APlayerCharacter::Smash()
 		{ ECharacterState::ECS_Idle, { "Smash0", ECharacterState::ECS_Smash0 }},
 
 		{ ECharacterState::ECS_Attack1, { "Smash1a", ECharacterState::ECS_Smash1a }},
-		{ ECharacterState::ECS_Smash1a, { "Smash1a", ECharacterState::ECS_Smash1b }},
-		{ ECharacterState::ECS_Smash1b, { "Smash1a", ECharacterState::ECS_Smash1c }},
+		{ ECharacterState::ECS_Smash1a, { "Smash1b", ECharacterState::ECS_Smash1b }},
+		{ ECharacterState::ECS_Smash1b, { "Smash1c", ECharacterState::ECS_Smash1c }},
 
 		{ ECharacterState::ECS_Attack2, { "Smash2a", ECharacterState::ECS_Smash2a }},
-		{ ECharacterState::ECS_Smash2a, { "Smash1a", ECharacterState::ECS_Smash2b }},
-		{ ECharacterState::ECS_Smash2b, { "Smash1a", ECharacterState::ECS_Smash2c }},
+		{ ECharacterState::ECS_Smash2a, { "Smash2b", ECharacterState::ECS_Smash2b }},
+		{ ECharacterState::ECS_Smash2b, { "Smash2c", ECharacterState::ECS_Smash2c }},
 
 		{ ECharacterState::ECS_Attack3, { "Smash3a", ECharacterState::ECS_Smash3a }},
-		{ ECharacterState::ECS_Smash3a, { "Smash1a", ECharacterState::ECS_Smash3b }},
-		{ ECharacterState::ECS_Smash3b, { "Smash1a", ECharacterState::ECS_Smash3c }},
+		{ ECharacterState::ECS_Smash3a, { "Smash3b", ECharacterState::ECS_Smash3b }},
+		{ ECharacterState::ECS_Smash3b, { "Smash3c", ECharacterState::ECS_Smash3c }},
+
+		{ ECharacterState::ECS_SmashAfterAttack1, { "Smash1a", ECharacterState::ECS_Smash1a }},
 
 		{ ECharacterState::ECS_SpeedyMove, { "SpeedyMoveSmash", ECharacterState::ECS_SpeedyMoveSmash }},
 	};

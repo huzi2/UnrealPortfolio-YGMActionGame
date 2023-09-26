@@ -2,19 +2,15 @@
 
 
 #include "Characters/BaseCharacter.h"
+#include "Characters/Components/AttackBoxComponent.h"
 
 ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjInit)
 	: Super(ObjInit)
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
-void ABaseCharacter::BeginPlay()
+UAttackBoxComponent* ABaseCharacter::GetAttackBox(const FName& AttackBoxName)
 {
-	Super::BeginPlay();
-}
-
-void ABaseCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	return Cast<UAttackBoxComponent>(GetDefaultSubobjectByName(AttackBoxName));
 }

@@ -20,6 +20,7 @@ enum class ECharacterState : uint8
 	ECS_Attack1 UMETA(DisplayName = "Attack1"),
 	ECS_Attack2 UMETA(DisplayName = "Attack2"),
 	ECS_Attack3 UMETA(DisplayName = "Attack3"),
+	ECS_SmashAfterAttack1 UMETA(DisplayName = "SmashAfterAttack1"),
 	ECS_Smash0 UMETA(DisplayName = "Smash0"),
 	ECS_Smash1a UMETA(DisplayName = "Smash1a"),
 	ECS_Smash1b UMETA(DisplayName = "Smash1b"),

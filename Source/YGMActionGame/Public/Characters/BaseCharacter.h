@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+class UAttackBoxComponent;
+
 UCLASS()
 class YGMACTIONGAME_API ABaseCharacter : public ACharacter
 {
@@ -14,7 +16,6 @@ class YGMACTIONGAME_API ABaseCharacter : public ACharacter
 protected:
 	ABaseCharacter(const FObjectInitializer& ObjInit);
 
-protected:
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+public:
+	UAttackBoxComponent* GetAttackBox(const FName& AttackBoxName);
 };
