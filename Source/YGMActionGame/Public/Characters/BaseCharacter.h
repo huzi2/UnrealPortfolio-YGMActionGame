@@ -17,5 +17,18 @@ protected:
 	ABaseCharacter(const FObjectInitializer& ObjInit);
 
 public:
+	virtual void PlayDirectionalHitReact(const FVector& ImpactPoint);
+
+public:
 	UAttackBoxComponent* GetAttackBox(const FName& AttackBoxName);
+
+protected:
+	// Status
+	UPROPERTY(EditDefaultsOnly, Category = "Status")
+	float AttackSpeed;
+
+private:
+	// Animations
+	UPROPERTY(EditDefaultsOnly, Category = "Animations")
+	UAnimMontage* HitReactMontage;
 };

@@ -2,6 +2,7 @@
 
 
 #include "Characters/Components/AttackBoxComponent.h"
+#include "Characters/BaseCharacter.h"
 
 UAttackBoxComponent::UAttackBoxComponent()
 {
@@ -28,7 +29,10 @@ void UAttackBoxComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
 {
 	if (OtherActor == GetOwner()) return;
 
-	UE_LOG(LogTemp, Warning, TEXT("Hit!!!!"));
+	ABaseCharacter* Character = Cast<ABaseCharacter>(OtherActor);
+	if (!Character) return;
+
+	Character->PlayDirectionalHitReact(GetComponentLocation());
 }
 
 void UAttackBoxComponent::AttackBoxEnable(const bool bEnable)

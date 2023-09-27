@@ -3,17 +3,17 @@
 
 #include "Animation/CharacterAnimInstance.h"
 
-void UCharacterAnimInstance::PlayMontage(UAnimMontage* Montage)
+void UCharacterAnimInstance::PlayMontage(UAnimMontage* Montage, const float PlaySpeed)
 {
 	if (!Montage) return;
 
-	Montage_Play(Montage);
+	Montage_Play(Montage, PlaySpeed);
 }
 
-void UCharacterAnimInstance::PlayMontageSection(UAnimMontage* Montage, const FName& SectionName)
+void UCharacterAnimInstance::PlayMontageSection(UAnimMontage* Montage, const FName& SectionName, const float PlaySpeed)
 {
 	if (!Montage) return;
 
-	Montage_Play(Montage);
+	Montage_Play(Montage, PlaySpeed);
 	Montage_JumpToSection(SectionName, Montage);
 }

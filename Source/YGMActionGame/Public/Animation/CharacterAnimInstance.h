@@ -15,6 +15,6 @@ class YGMACTIONGAME_API UCharacterAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 	
 public:
-	virtual void PlayMontage(UAnimMontage* Montage);
-	virtual void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName);
+	virtual void PlayMontage(UAnimMontage* Montage, const float PlaySpeed = 1.f);
+	virtual void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName, const float PlaySpeed = 1.f);
 };

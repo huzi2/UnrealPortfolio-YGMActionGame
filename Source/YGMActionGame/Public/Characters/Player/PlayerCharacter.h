@@ -48,6 +48,9 @@ private:
 	virtual void BeginPlay() final;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) final;
 
+private:
+	virtual void PlayDirectionalHitReact(const FVector& ImpactPoint) final;
+
 public:
 	bool IsSprinting() const;
 	void ResetState();

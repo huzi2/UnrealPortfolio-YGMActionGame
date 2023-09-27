@@ -31,8 +31,8 @@ private:
 	void AnimNotify_CanMove();
 
 public:
-	virtual void PlayMontage(UAnimMontage* Montage) final;
-	virtual void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName) final;
+	virtual void PlayMontage(UAnimMontage* Montage, const float PlaySpeed = 1.f) final;
+	virtual void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName, const float PlaySpeed = 1.f) final;
 
 public:
 	FORCEINLINE bool CanAttack() const { return bCanAttack; }

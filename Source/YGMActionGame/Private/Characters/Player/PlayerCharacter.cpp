@@ -75,6 +75,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+void APlayerCharacter::PlayDirectionalHitReact(const FVector& ImpactPoint)
+{
+	Super::PlayDirectionalHitReact(ImpactPoint);
+
+	ResetState();
+}
+
 bool APlayerCharacter::IsSprinting() const
 {
 	return bIsSprint && !GetVelocity().IsZero();
@@ -193,14 +200,14 @@ void APlayerCharacter::Attack()
 	const std::pair<FName, ECharacterState>* AttackInfo = AttackInfo_Map.Find(CharacterState);
 	if (!AttackInfo)
 	{
-		AnimInstance->PlayMontageSection(AttackMontage, TEXT("Attack1"));
+		AnimInstance->PlayMontageSection(AttackMontage, TEXT("Attack1"), AttackSpeed);
 		CharacterState = ECharacterState::ECS_Attack1;
 		return;
 	}
 
 	RotateToController();
 
-	AnimInstance->PlayMontageSection(AttackMontage, AttackInfo->first);
+	AnimInstance->PlayMontageSection(AttackMontage, AttackInfo->first, AttackSpeed);
 	CharacterState = AttackInfo->second;
 }
 
@@ -237,7 +244,7 @@ void APlayerCharacter::Smash()
 
 	RotateToController();
 
-	AnimInstance->PlayMontageSection(SmashMontage, SmashInfo->first);
+	AnimInstance->PlayMontageSection(SmashMontage, SmashInfo->first, AttackSpeed);
 	CharacterState = SmashInfo->second;
 }
 

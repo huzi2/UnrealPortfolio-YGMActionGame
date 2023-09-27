@@ -37,16 +37,16 @@ void UPlayerCharacterAnimInstance::AnimNotify_CanMove()
 	bCanMove = true;
 }
 
-void UPlayerCharacterAnimInstance::PlayMontage(UAnimMontage* Montage)
+void UPlayerCharacterAnimInstance::PlayMontage(UAnimMontage* Montage, const float PlaySpeed)
 {
-	Super::PlayMontage(Montage);
+	Super::PlayMontage(Montage, PlaySpeed);
 
 	LockState();
 }
 
-void UPlayerCharacterAnimInstance::PlayMontageSection(UAnimMontage* Montage, const FName& SectionName)
+void UPlayerCharacterAnimInstance::PlayMontageSection(UAnimMontage* Montage, const FName& SectionName, const float PlaySpeed)
 {
-	Super::PlayMontageSection(Montage, SectionName);
+	Super::PlayMontageSection(Montage, SectionName, PlaySpeed);
 
 	LockState();
 }
