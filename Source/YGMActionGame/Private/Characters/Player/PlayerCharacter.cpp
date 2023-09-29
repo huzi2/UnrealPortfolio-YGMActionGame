@@ -197,6 +197,8 @@ void APlayerCharacter::Attack()
 		{ ECharacterState::ECS_Smash3c, { "SmashAfterAttack1", ECharacterState::ECS_SmashAfterAttack1 }},
 	};
 
+	const float AttackSpeed = GetAttackSpeed();
+
 	const std::pair<FName, ECharacterState>* AttackInfo = AttackInfo_Map.Find(CharacterState);
 	if (!AttackInfo)
 	{
@@ -244,7 +246,7 @@ void APlayerCharacter::Smash()
 
 	RotateToController();
 
-	AnimInstance->PlayMontageSection(SmashMontage, SmashInfo->first, AttackSpeed);
+	AnimInstance->PlayMontageSection(SmashMontage, SmashInfo->first, GetAttackSpeed());
 	CharacterState = SmashInfo->second;
 }
 

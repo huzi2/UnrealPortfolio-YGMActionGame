@@ -7,6 +7,8 @@
 #include "BaseCharacter.generated.h"
 
 class UAttackBoxComponent;
+class UAttributeComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class YGMACTIONGAME_API ABaseCharacter : public ACharacter
@@ -20,15 +22,21 @@ public:
 	virtual void PlayDirectionalHitReact(const FVector& ImpactPoint);
 
 public:
+	float GetAttackSpeed() const;
 	UAttackBoxComponent* GetAttackBox(const FName& AttackBoxName);
+	void PlayAttackEffect(const FVector& EffectLocation);
 
 protected:
-	// Status
-	UPROPERTY(EditDefaultsOnly, Category = "Status")
-	float AttackSpeed;
+	// Components
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UAttributeComponent* AttributeComponent;
 
 private:
 	// Animations
 	UPROPERTY(EditDefaultsOnly, Category = "Animations")
 	UAnimMontage* HitReactMontage;
+
+	// Effects
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	UNiagaraSystem* AttackEffect;
 };

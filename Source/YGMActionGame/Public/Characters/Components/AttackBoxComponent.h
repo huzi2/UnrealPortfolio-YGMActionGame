@@ -24,6 +24,9 @@ private:
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+private:
+	void BoxTrace(FHitResult& BoxHit);
+
 public:
 	void AttackBoxEnable(const bool bEnable);
 };

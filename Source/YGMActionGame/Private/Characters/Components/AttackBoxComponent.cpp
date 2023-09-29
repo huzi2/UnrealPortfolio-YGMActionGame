@@ -3,6 +3,7 @@
 
 #include "Characters/Components/AttackBoxComponent.h"
 #include "Characters/BaseCharacter.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UAttackBoxComponent::UAttackBoxComponent()
 {
@@ -29,10 +30,35 @@ void UAttackBoxComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
 {
 	if (OtherActor == GetOwner()) return;
 
-	ABaseCharacter* Character = Cast<ABaseCharacter>(OtherActor);
-	if (!Character) return;
+	FHitResult BoxHit;
+	BoxTrace(BoxHit);
 
-	Character->PlayDirectionalHitReact(GetComponentLocation());
+	if (BoxHit.GetActor())
+	{
+		ABaseCharacter* Character = Cast<ABaseCharacter>(BoxHit.GetActor());
+		if (!Character) return;
+
+		Character->PlayDirectionalHitReact(BoxHit.ImpactPoint);
+
+		ABaseCharacter* OwnerCharacter = Cast<ABaseCharacter>(GetOwner());
+		if (!OwnerCharacter) return;
+
+		OwnerCharacter->PlayAttackEffect(BoxHit.ImpactPoint);
+	}
+}
+
+void UAttackBoxComponent::BoxTrace(FHitResult& BoxHit)
+{
+	const FVector& BoxOrigin = GetComponentLocation();
+	const FRotator& BoxRotation = GetComponentRotation();
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(GetOwner());
+
+	const bool bHit = UKismetSystemLibrary::BoxTraceSingleForObjects(this, BoxOrigin, BoxOrigin + BoxRotation.Vector() * 1.1f, BoxExtent * 2.f, BoxRotation, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, BoxHit, true);
 }
 
 void UAttackBoxComponent::AttackBoxEnable(const bool bEnable)

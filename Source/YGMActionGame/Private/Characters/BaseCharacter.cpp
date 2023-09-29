@@ -2,14 +2,17 @@
 
 
 #include "Characters/BaseCharacter.h"
+#include "Characters/Components/AttributeComponent.h"
 #include "Characters/Components/AttackBoxComponent.h"
 #include "Animation/CharacterAnimInstance.h"
+#include "NiagaraFunctionLibrary.h"
 
 ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjInit)
 	: Super(ObjInit)
-	, AttackSpeed(1.f)
 {
 	PrimaryActorTick.bCanEverTick = false;
+
+	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
 }
 
 void ABaseCharacter::PlayDirectionalHitReact(const FVector& ImpactPoint)
@@ -59,7 +62,20 @@ void ABaseCharacter::PlayDirectionalHitReact(const FVector& ImpactPoint)
 	AnimInstance->PlayMontageSection(HitReactMontage, Section);
 }
 
+float ABaseCharacter::GetAttackSpeed() const
+{
+	return AttributeComponent ? AttributeComponent->GetAttackSpeed() : 1.f;
+}
+
 UAttackBoxComponent* ABaseCharacter::GetAttackBox(const FName& AttackBoxName)
 {
 	return Cast<UAttackBoxComponent>(GetDefaultSubobjectByName(AttackBoxName));
+}
+
+void ABaseCharacter::PlayAttackEffect(const FVector& EffectLocation)
+{
+	if (AttackEffect)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackEffect, EffectLocation);
+	}
 }
