@@ -4,6 +4,7 @@
 #include "Characters/BaseCharacter.h"
 #include "Characters/Components/AttributeComponent.h"
 #include "Characters/Components/AttackBoxComponent.h"
+#include "Characters/Components/HealthBarComponent.h"
 #include "Animation/CharacterAnimInstance.h"
 #include "NiagaraFunctionLibrary.h"
 
@@ -13,6 +14,25 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjInit)
 	PrimaryActorTick.bCanEverTick = false;
 
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
+
+	HealthBarComponent = CreateDefaultSubobject<UHealthBarComponent>(TEXT("HealthBarComponent"));
+	HealthBarComponent->SetupAttachment(GetRootComponent());
+}
+
+float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	const float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (AttributeComponent)
+	{
+		AttributeComponent->ReceiveDamage(DamageAmount);
+
+		if (HealthBarComponent)
+		{
+			HealthBarComponent->SetHealthBarPercent(AttributeComponent->GetHealthPercent());
+		}
+	}
+	return Damage;
 }
 
 void ABaseCharacter::PlayDirectionalHitReact(const FVector& ImpactPoint)
@@ -60,6 +80,11 @@ void ABaseCharacter::PlayDirectionalHitReact(const FVector& ImpactPoint)
 	}
 
 	AnimInstance->PlayMontageSection(HitReactMontage, Section);
+}
+
+float ABaseCharacter::GetAttackDamage() const
+{
+	return AttributeComponent ? AttributeComponent->GetAttackDamage() : 10.f;
 }
 
 float ABaseCharacter::GetAttackSpeed() const

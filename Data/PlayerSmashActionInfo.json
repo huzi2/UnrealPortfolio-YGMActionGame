@@ -1,0 +1,50 @@
+{
+  "ECS_Idle": {
+    "animation": "Smash0",
+    "nextState": "ECS_Smash0"
+  },
+  "ECS_Attack1": {
+    "animation": "Smash1a",
+    "nextState": "ECS_Smash1a"
+  },
+  "ECS_Smash1a": {
+    "animation": "Smash1b",
+    "nextState": "ECS_Smash1b"
+  },
+  "ECS_Smash1b": {
+    "animation": "Smash1c",
+    "nextState": "ECS_Smash1c"
+  },
+  "ECS_Attack2": {
+    "animation": "Smash2a",
+    "nextState": "ECS_Smash2a"
+  },
+  "ECS_Smash2a": {
+    "animation": "Smash2b",
+    "nextState": "ECS_Smash2b"
+  },
+  "ECS_Smash2b": {
+    "animation": "Smash2c",
+    "nextState": "ECS_Smash2c"
+  },
+  "ECS_Attack3": {
+    "animation": "Smash3a",
+    "nextState": "ECS_Smash3a"
+  },
+  "ECS_Smash3a": {
+    "animation": "Smash3b",
+    "nextState": "ECS_Smash3b"
+  },
+  "ECS_Smash3b": {
+    "animation": "Smash3c",
+    "nextState": "ECS_Smash3c"
+  },
+  "ECS_SmashAfterAttack1": {
+    "animation": "Smash1a",
+    "nextState": "ECS_Smash1a"
+  },
+  "ECS_SpeedyMove": {
+    "animation": "SpeedyMoveSmash",
+    "nextState": "ECS_SpeedyMoveSmash"
+  }
+}

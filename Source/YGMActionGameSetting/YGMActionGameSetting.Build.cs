@@ -2,13 +2,13 @@
 
 using UnrealBuildTool;
 
-public class YGMActionGame : ModuleRules
+public class YGMActionGameSetting : ModuleRules
 {
-	public YGMActionGame(ReadOnlyTargetRules Target) : base(Target)
+	public YGMActionGameSetting(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Niagara", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "Json" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -6,7 +6,10 @@
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "GameFrameWork/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/Components/AttributeComponent.h"
 #include "Animation/PlayerCharacterAnimInstance.h"
+#include "UI/GameHUD.h"
+#include "UI/PlayerOverlay.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -18,6 +21,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjInit)
 	, bIsSprint(false)
 	, CharacterState(ECharacterState::ECS_Idle)
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -55,6 +60,10 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultInputMappingContext, 0);
 		}
 	}
+
+	InitializePlayerOverlay();
+
+	ActionGameData = GetDefault<UYGMActionGameData>();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -73,6 +82,28 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		Input->BindAction(AttackInputAction, ETriggerEvent::Started, this, &APlayerCharacter::Attack);
 		Input->BindAction(SmashInputAction, ETriggerEvent::Started, this, &APlayerCharacter::Smash);
 	}
+}
+
+void APlayerCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (AttributeComponent)
+	{
+		AttributeComponent->RegenStamina(DeltaSeconds);
+
+		if (PlayerOverlay)
+		{
+			PlayerOverlay->SetStaminaBarPercent(AttributeComponent->GetStaminaPercent());
+		}
+	}
+}
+
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	const float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	SetHUDHealth();
+	return Damage;
 }
 
 void APlayerCharacter::PlayDirectionalHitReact(const FVector& ImpactPoint)
@@ -171,6 +202,8 @@ void APlayerCharacter::SpeedyMove()
 	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!AnimInstance) return;
 
+	if (!UseStamina(20.f)) return;
+
 	RotateToController();
 
 	AnimInstance->PlayMontage(SpeedyMoveMontage);
@@ -182,20 +215,12 @@ void APlayerCharacter::Attack()
 {
 	if (!CanAttack()) return;
 	if (!AttackMontage) return;
+	if (!ActionGameData) return;
 
 	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!AnimInstance) return;
 
-	// 이 부분 밖에서 외부 파일로 빼면 좋을 듯
-	static const TMap<ECharacterState, std::pair<FName, ECharacterState>> AttackInfo_Map = {
-		/*{ ECharacterState::ECS_Idle, { "Attack1", ECharacterState::ECS_Attack1 }},
-		{ ECharacterState::ECS_Attack3, { "Attack1", ECharacterState::ECS_Attack1 }},*/
-
-		{ ECharacterState::ECS_Attack1, { "Attack2", ECharacterState::ECS_Attack2 }},
-		{ ECharacterState::ECS_Attack2, { "Attack3", ECharacterState::ECS_Attack3 }},
-		{ ECharacterState::ECS_SmashAfterAttack1, { "Attack2", ECharacterState::ECS_Attack2 }},
-		{ ECharacterState::ECS_Smash3c, { "SmashAfterAttack1", ECharacterState::ECS_SmashAfterAttack1 }},
-	};
+	const TMap<ECharacterState, std::pair<FName, ECharacterState>>& AttackInfo_Map = ActionGameData->GetPlayerAttackActionInfo();
 
 	const float AttackSpeed = GetAttackSpeed();
 
@@ -217,11 +242,12 @@ void APlayerCharacter::Smash()
 {
 	if (!CanAttack()) return;
 	if (!SmashMontage) return;
+	if (!ActionGameData) return;
 
 	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!AnimInstance) return;
 
-	static const TMap<ECharacterState, std::pair<FName, ECharacterState>> SmashInfo_Map = {
+	/*static const TMap<ECharacterState, std::pair<FName, ECharacterState>> SmashInfo_Map = {
 		{ ECharacterState::ECS_Idle, { "Smash0", ECharacterState::ECS_Smash0 }},
 
 		{ ECharacterState::ECS_Attack1, { "Smash1a", ECharacterState::ECS_Smash1a }},
@@ -239,15 +265,65 @@ void APlayerCharacter::Smash()
 		{ ECharacterState::ECS_SmashAfterAttack1, { "Smash1a", ECharacterState::ECS_Smash1a }},
 
 		{ ECharacterState::ECS_SpeedyMove, { "SpeedyMoveSmash", ECharacterState::ECS_SpeedyMoveSmash }},
-	};
+	};*/
+
+	const TMap<ECharacterState, std::pair<FName, ECharacterState>>& SmashInfo_Map = ActionGameData->GetPlayerSmashActionInfo();
 
 	const std::pair<FName, ECharacterState>* SmashInfo = SmashInfo_Map.Find(CharacterState);
 	if (!SmashInfo) return;
+
+	if (!UseStamina(10.f)) return;
 
 	RotateToController();
 
 	AnimInstance->PlayMontageSection(SmashMontage, SmashInfo->first, GetAttackSpeed());
 	CharacterState = SmashInfo->second;
+}
+
+void APlayerCharacter::InitializePlayerOverlay()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+	if (PlayerController)
+	{
+		AGameHUD* GameHUD = Cast<AGameHUD>(PlayerController->GetHUD());
+		if (GameHUD)
+		{
+			PlayerOverlay = GameHUD->GetPlayerOverlay();
+			SetHUDHealth();
+			SetHUDStamina();
+		}
+	}
+}
+
+void APlayerCharacter::SetHUDHealth()
+{
+	if (PlayerOverlay && AttributeComponent)
+	{
+		PlayerOverlay->SetHealthBarPercent(AttributeComponent->GetHealthPercent());
+	}
+}
+
+void APlayerCharacter::SetHUDStamina()
+{
+	if (PlayerOverlay && AttributeComponent)
+	{
+		PlayerOverlay->SetStaminaBarPercent(AttributeComponent->GetStaminaPercent());
+	}
+}
+
+bool APlayerCharacter::UseStamina(const float StaminaCost)
+{
+	bool bResult = false;
+	if (AttributeComponent)
+	{
+		bResult = AttributeComponent->UseStamina(StaminaCost);
+	}
+
+	if (bResult)
+	{
+		SetHUDStamina();
+	}
+	return bResult;
 }
 
 void APlayerCharacter::StopAnimation()

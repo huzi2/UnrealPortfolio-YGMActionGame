@@ -5,6 +5,11 @@
 #include "Characters/BaseCharacter.h"
 #include "Characters/Components/AttackBoxComponent.h"
 
+UAttackBoxAnimNotifyState::UAttackBoxAnimNotifyState()
+	: DamageModifier(1.f)
+{
+}
+
 void UAttackBoxAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
@@ -17,6 +22,7 @@ void UAttackBoxAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 	AttackBox = Character->GetAttackBox(AttackBoxName);
 	if (!AttackBox) return;
 
+	AttackBox->SetDamageModifier(DamageModifier);
 	AttackBox->AttackBoxEnable(true);
 }
 
@@ -26,5 +32,6 @@ void UAttackBoxAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAni
 
 	if (!AttackBox) return;
 
+	AttackBox->SetDamageModifier(1.f);
 	AttackBox->AttackBoxEnable(false);
 }

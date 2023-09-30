@@ -4,8 +4,10 @@
 #include "Characters/Components/AttackBoxComponent.h"
 #include "Characters/BaseCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 UAttackBoxComponent::UAttackBoxComponent()
+	: bBoxVisible(false)
 {
 	SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -44,6 +46,8 @@ void UAttackBoxComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
 		if (!OwnerCharacter) return;
 
 		OwnerCharacter->PlayAttackEffect(BoxHit.ImpactPoint);
+
+		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), OwnerCharacter->GetAttackDamage() * DamageModifier, OwnerCharacter->GetController(), OwnerCharacter, UDamageType::StaticClass());
 	}
 }
 
@@ -64,5 +68,9 @@ void UAttackBoxComponent::BoxTrace(FHitResult& BoxHit)
 void UAttackBoxComponent::AttackBoxEnable(const bool bEnable)
 {
 	bEnable ? SetCollisionEnabled(ECollisionEnabled::QueryOnly) : SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SetVisibility(bEnable);
+
+	if (bBoxVisible)
+	{
+		SetVisibility(bEnable);
+	}
 }

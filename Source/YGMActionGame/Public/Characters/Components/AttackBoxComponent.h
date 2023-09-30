@@ -28,5 +28,14 @@ private:
 	void BoxTrace(FHitResult& BoxHit);
 
 public:
+	FORCEINLINE void SetDamageModifier(const float Modifier) { DamageModifier = Modifier; }
+
 	void AttackBoxEnable(const bool bEnable);
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Attack Box")
+	bool bBoxVisible;
+
+private:
+	float DamageModifier;
 };

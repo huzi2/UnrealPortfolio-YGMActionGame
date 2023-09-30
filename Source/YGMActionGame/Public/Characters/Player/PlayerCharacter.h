@@ -4,35 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Characters/BaseCharacter.h"
+#include "YGMActionGameData.h"
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
+class UPlayerOverlay;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 
-UENUM(BlueprintType)
-enum class ECharacterState : uint8
-{
-	ECS_Idle UMETA(DisplayName = "Idle"),
-	ECS_SpeedyMove UMETA(DisplayName = "SpeedyMove"),
-	ECS_Attack1 UMETA(DisplayName = "Attack1"),
-	ECS_Attack2 UMETA(DisplayName = "Attack2"),
-	ECS_Attack3 UMETA(DisplayName = "Attack3"),
-	ECS_SmashAfterAttack1 UMETA(DisplayName = "SmashAfterAttack1"),
-	ECS_Smash0 UMETA(DisplayName = "Smash0"),
-	ECS_Smash1a UMETA(DisplayName = "Smash1a"),
-	ECS_Smash1b UMETA(DisplayName = "Smash1b"),
-	ECS_Smash1c UMETA(DisplayName = "Smash1c"),
-	ECS_Smash2a UMETA(DisplayName = "Smash2a"),
-	ECS_Smash2b UMETA(DisplayName = "Smash2b"),
-	ECS_Smash2c UMETA(DisplayName = "Smash2c"),
-	ECS_Smash3a UMETA(DisplayName = "Smash3a"),
-	ECS_Smash3b UMETA(DisplayName = "Smash3b"),
-	ECS_Smash3c UMETA(DisplayName = "Smash3c"),
-	ECS_SpeedyMoveSmash UMETA(DisplayName = "SpeedyMoveSmash"),
-};
 /**
  * 
  */
@@ -47,6 +28,8 @@ private:
 private:
 	virtual void BeginPlay() final;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) final;
+	virtual void Tick(float DeltaSeconds) final;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) final;
 
 private:
 	virtual void PlayDirectionalHitReact(const FVector& ImpactPoint) final;
@@ -67,6 +50,10 @@ private:
 	void Attack();
 	void Smash();
 
+	void InitializePlayerOverlay();
+	void SetHUDHealth();
+	void SetHUDStamina();
+	bool UseStamina(const float StaminaCost);
 	void StopAnimation();
 	void RotateToController();
 	bool CanAttack() const;
@@ -120,6 +107,12 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* SmashInputAction;
+
+	UPROPERTY()
+	UPlayerOverlay* PlayerOverlay;
+
+	UPROPERTY()
+	const UYGMActionGameData* ActionGameData;
 
 private:
 	bool bIsSprint;

@@ -5,11 +5,21 @@
 	"Description": "",
 	"Modules": [
 		{
+			"Name": "YGMActionGameSetting",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault",
+			"AdditionalDependencies": [
+				"CoreUObject"
+			]
+		},
+		{
 			"Name": "YGMActionGame",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"Engine"
+				"Engine",
+				"UMG",
+				"YGMActionGameSetting"
 			]
 		}
 	],
