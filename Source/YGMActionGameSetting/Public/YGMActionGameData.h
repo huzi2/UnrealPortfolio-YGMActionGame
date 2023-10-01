@@ -50,13 +50,14 @@ private:
 	UYGMActionGameData();
 
 public:
-	FORCEINLINE const TMap<ECharacterState, std::pair<FName, ECharacterState>>& GetPlayerAttackActionInfo() const { return PlayerAttackActionInfo; }
-	FORCEINLINE const TMap<ECharacterState, std::pair<FName, ECharacterState>>& GetPlayerSmashActionInfo() const { return PlayerSmashActionInfo; }
+	FORCEINLINE const TMap<ECharacterState, TPair<FName, ECharacterState>>& GetPlayerAttackActionInfo() const { return PlayerAttackActionInfo; }
+	FORCEINLINE const TMap<ECharacterState, TPair<FName, ECharacterState>>& GetPlayerSmashActionInfo() const { return PlayerSmashActionInfo; }
 
 private:
-	void ReadActionInfoJsonData(const FString& FilePath, TMap<ECharacterState, std::pair<FName, ECharacterState>>& InfoMap);
+	void ReadActionInfoJsonData(const FString& FilePath, TMap<ECharacterState, TPair<FName, ECharacterState>>& InfoMap);
+	void ReadActionInfoXMLData(const FString& FilePath, TMap<ECharacterState, TPair<FName, ECharacterState>>& InfoMap);
 
 private:
-	TMap<ECharacterState, std::pair<FName, ECharacterState>> PlayerAttackActionInfo;
-	TMap<ECharacterState, std::pair<FName, ECharacterState>> PlayerSmashActionInfo;
+	TMap<ECharacterState, TPair<FName, ECharacterState>> PlayerAttackActionInfo;
+	TMap<ECharacterState, TPair<FName, ECharacterState>> PlayerSmashActionInfo;
 };

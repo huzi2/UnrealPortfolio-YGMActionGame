@@ -37,17 +37,27 @@ void UAttackBoxComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
 
 	if (BoxHit.GetActor())
 	{
-		ABaseCharacter* Character = Cast<ABaseCharacter>(BoxHit.GetActor());
-		if (!Character) return;
-
-		Character->PlayDirectionalHitReact(BoxHit.ImpactPoint);
-
 		ABaseCharacter* OwnerCharacter = Cast<ABaseCharacter>(GetOwner());
 		if (!OwnerCharacter) return;
+
+		//const FVector& HitPoint = BoxHit.ImpactPoint;
+		const FVector& HitPoint = GetComponentLocation();
 
 		OwnerCharacter->PlayAttackEffect(BoxHit.ImpactPoint);
 
 		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), OwnerCharacter->GetAttackDamage() * DamageModifier, OwnerCharacter->GetController(), OwnerCharacter, UDamageType::StaticClass());
+
+		ABaseCharacter* Character = Cast<ABaseCharacter>(BoxHit.GetActor());
+		if (!Character) return;
+
+		if (Character->IsAlive())
+		{
+			Character->PlayHitReactAnimation(HitPoint);
+		}
+		else
+		{
+			Character->PlayDieAnimation(HitPoint);
+		}
 	}
 }
 

@@ -32,7 +32,7 @@ private:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) final;
 
 private:
-	virtual void PlayDirectionalHitReact(const FVector& ImpactPoint) final;
+	virtual void PlayHitReactAnimation(const FVector& ImpactPoint) final;
 
 public:
 	bool IsSprinting() const;

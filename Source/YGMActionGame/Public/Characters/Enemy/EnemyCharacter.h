@@ -14,4 +14,6 @@ class YGMACTIONGAME_API AEnemyCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 	
+private:
+	AEnemyCharacter(const FObjectInitializer& ObjInit);
 };

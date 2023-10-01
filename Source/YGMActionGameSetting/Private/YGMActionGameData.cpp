@@ -1,55 +1,62 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "YGMActionGameData.h"
+#include "JsonFileReader.h"
+#include "XMLFileReader.h"
+#include "XmlParser.h"
 
 UYGMActionGameData::UYGMActionGameData()
 {
-    const FString PlayerAttackActionInfoJsonFilePath = FPaths::ProjectDir() + TEXT("/Data/PlayerAttackActionInfo.json");
+    const FString PlayerAttackActionInfoJsonFilePath = FPaths::ProjectContentDir() + TEXT("/Data/PlayerAttackActionInfo.json");
     ReadActionInfoJsonData(PlayerAttackActionInfoJsonFilePath, PlayerAttackActionInfo);
 
-    const FString PlayerSmashActionInfoJsonFilePath = FPaths::ProjectDir() + TEXT("/Data/PlayerSmashActionInfo.json");
+    const FString PlayerSmashActionInfoJsonFilePath = FPaths::ProjectContentDir() + TEXT("/Data/PlayerSmashActionInfo.json");
     ReadActionInfoJsonData(PlayerSmashActionInfoJsonFilePath, PlayerSmashActionInfo);
+
+    //const FString PlayerSmashActionInfoXMLFilePath = FPaths::ProjectContentDir() + TEXT("/Data/PlayerSmashActionInfo.xml");
+    /*const FString PlayerSmashActionInfoXMLFilePath = FPaths::ProjectContentDir() / TEXT("/Data/PlayerSmashActionInfo.xml");
+    ReadActionInfoXMLData(PlayerSmashActionInfoXMLFilePath, PlayerSmashActionInfo);*/
 }
 
-void UYGMActionGameData::ReadActionInfoJsonData(const FString& FilePath, TMap<ECharacterState, std::pair<FName, ECharacterState>>& InfoMap)
+void UYGMActionGameData::ReadActionInfoJsonData(const FString& FilePath, TMap<ECharacterState, TPair<FName, ECharacterState>>& InfoMap)
 {
-    FString JsonFileContent;
-
-    // 파일의 내용을 JsonFileContent에 로드
-    if (FFileHelper::LoadFileToString(JsonFileContent, *FilePath))
+    const TSharedPtr<FJsonObject> JsonObject = UJsonFileReader::ParsingJsonObject(FilePath);
+    if (JsonObject.IsValid())
     {
-        TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonFileContent);
-        TSharedPtr<FJsonObject> JsonObject;
+        UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("ECharacterState"), true);
 
-        // JSON 텍스트를 FJsonObject로 파싱
-        if (FJsonSerializer::Deserialize(JsonReader, JsonObject) && JsonObject.IsValid())
+        // FJsonObject의 멤버들을 반복
+        for (const auto& Member : JsonObject->Values)
         {
-            UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("ECharacterState"), true);
+            const TSharedPtr<FJsonObject> Value = Member.Value->AsObject();
 
-            // FJsonObject의 멤버들을 반복
-            for (auto& Member : JsonObject->Values)
+            // 키와 값을 출력
+            if (Value.IsValid() && Value->HasField(TEXT("animation")) && Value->HasField(TEXT("nextState")))
             {
-                TSharedPtr<FJsonObject> Value = Member.Value->AsObject();
+                const ECharacterState Key = static_cast<ECharacterState>(EnumPtr->GetValueByNameString(Member.Key));
+                const FName Animation = FName(*Value->GetStringField(TEXT("animation")));
+                const ECharacterState NextState = static_cast<ECharacterState>(EnumPtr->GetValueByNameString(Value->GetStringField(TEXT("nextState"))));
 
-                // 키와 값을 출력
-                if (Value.IsValid() && Value->HasField(TEXT("animation")) && Value->HasField(TEXT("nextState")))
-                {
-                    ECharacterState Key = static_cast<ECharacterState>(EnumPtr->GetValueByNameString(Member.Key));
-                    FName Animation = FName(*Value->GetStringField(TEXT("animation")));
-                    ECharacterState NextState = static_cast<ECharacterState>(EnumPtr->GetValueByNameString(Value->GetStringField(TEXT("nextState"))));
-
-                    InfoMap.Add(Key, std::make_pair(Animation, NextState));
-                }
+                InfoMap.Add(Key, TPair<FName, ECharacterState>(Animation, NextState));
             }
         }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Failed to parse JSON"));
-        }
     }
-    else
+}
+
+void UYGMActionGameData::ReadActionInfoXMLData(const FString& FilePath, TMap<ECharacterState, TPair<FName, ECharacterState>>& InfoMap)
+{
+    const FXmlNode* RootNode = UXMLFileReader::ParsingXML(FilePath);
+    if (!RootNode) return;
+
+    UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("ECharacterState"), true);
+
+    for (auto StateNode : RootNode->GetChildrenNodes())
     {
-        UE_LOG(LogTemp, Warning, TEXT("Failed to load JSON file"));
+        // 상태, 애니메이션, 다음 상태 파싱
+        ECharacterState State = static_cast<ECharacterState>(EnumPtr->GetValueByNameString(TEXT("state")));
+        FName Animation = *StateNode->GetAttribute(TEXT("animation"));
+        ECharacterState NextState = static_cast<ECharacterState>(EnumPtr->GetValueByNameString(TEXT("nextState")));
+
+        InfoMap.Add(State, TPair<FName, ECharacterState>(Animation, NextState));
     }
 }

@@ -106,9 +106,9 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return Damage;
 }
 
-void APlayerCharacter::PlayDirectionalHitReact(const FVector& ImpactPoint)
+void APlayerCharacter::PlayHitReactAnimation(const FVector& ImpactPoint)
 {
-	Super::PlayDirectionalHitReact(ImpactPoint);
+	Super::PlayHitReactAnimation(ImpactPoint);
 
 	ResetState();
 }
@@ -220,11 +220,11 @@ void APlayerCharacter::Attack()
 	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!AnimInstance) return;
 
-	const TMap<ECharacterState, std::pair<FName, ECharacterState>>& AttackInfo_Map = ActionGameData->GetPlayerAttackActionInfo();
+	const TMap<ECharacterState, TPair<FName, ECharacterState>>& AttackInfo_Map = ActionGameData->GetPlayerAttackActionInfo();
 
 	const float AttackSpeed = GetAttackSpeed();
 
-	const std::pair<FName, ECharacterState>* AttackInfo = AttackInfo_Map.Find(CharacterState);
+	const TPair<FName, ECharacterState>* AttackInfo = AttackInfo_Map.Find(CharacterState);
 	if (!AttackInfo)
 	{
 		AnimInstance->PlayMontageSection(AttackMontage, TEXT("Attack1"), AttackSpeed);
@@ -234,8 +234,8 @@ void APlayerCharacter::Attack()
 
 	RotateToController();
 
-	AnimInstance->PlayMontageSection(AttackMontage, AttackInfo->first, AttackSpeed);
-	CharacterState = AttackInfo->second;
+	AnimInstance->PlayMontageSection(AttackMontage, AttackInfo->Key, AttackSpeed);
+	CharacterState = AttackInfo->Value;
 }
 
 void APlayerCharacter::Smash()
@@ -267,17 +267,17 @@ void APlayerCharacter::Smash()
 		{ ECharacterState::ECS_SpeedyMove, { "SpeedyMoveSmash", ECharacterState::ECS_SpeedyMoveSmash }},
 	};*/
 
-	const TMap<ECharacterState, std::pair<FName, ECharacterState>>& SmashInfo_Map = ActionGameData->GetPlayerSmashActionInfo();
+	const TMap<ECharacterState, TPair<FName, ECharacterState>>& SmashInfo_Map = ActionGameData->GetPlayerSmashActionInfo();
 
-	const std::pair<FName, ECharacterState>* SmashInfo = SmashInfo_Map.Find(CharacterState);
+	const TPair<FName, ECharacterState>* SmashInfo = SmashInfo_Map.Find(CharacterState);
 	if (!SmashInfo) return;
 
 	if (!UseStamina(10.f)) return;
 
 	RotateToController();
 
-	AnimInstance->PlayMontageSection(SmashMontage, SmashInfo->first, GetAttackSpeed());
-	CharacterState = SmashInfo->second;
+	AnimInstance->PlayMontageSection(SmashMontage, SmashInfo->Key, GetAttackSpeed());
+	CharacterState = SmashInfo->Value;
 }
 
 void APlayerCharacter::InitializePlayerOverlay()

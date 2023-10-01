@@ -20,16 +20,32 @@ protected:
 	ABaseCharacter(const FObjectInitializer& ObjInit);
 
 protected:
+	virtual void BeginPlay() override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-public:
-	virtual void PlayDirectionalHitReact(const FVector& ImpactPoint);
+protected:
+	UFUNCTION()
+	virtual void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 public:
+	virtual void PlayHitReactAnimation(const FVector& ImpactPoint);
+	virtual void PlayDieAnimation(const FVector& ImpactPoint);
+
+private:
+	virtual void Die();
+
+public:
+	bool IsAlive() const;
 	float GetAttackDamage() const;
 	float GetAttackSpeed() const;
 	UAttackBoxComponent* GetAttackBox(const FName& AttackBoxName);
 	void PlayAttackEffect(const FVector& EffectLocation);
+
+private:
+	const FName GetDirectionalName(const FVector& ImpactPoint);
+	void HideHealthBar();
+	void DisableCapsule();
+	void SetRagDoll();
 
 protected:
 	// Components
@@ -43,6 +59,9 @@ private:
 	// Animations
 	UPROPERTY(EditDefaultsOnly, Category = "Animations")
 	UAnimMontage* HitReactMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animations")
+	UAnimMontage* DieMontage;
 
 	// Effects
 	UPROPERTY(EditAnywhere, Category = "Effects")

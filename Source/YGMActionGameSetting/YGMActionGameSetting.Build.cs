@@ -8,7 +8,7 @@ public class YGMActionGameSetting : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "Json" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "Json", "XmlParser" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
