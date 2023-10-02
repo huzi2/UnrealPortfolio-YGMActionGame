@@ -10,6 +10,7 @@ class UAttackBoxComponent;
 class UAttributeComponent;
 class UHealthBarComponent;
 class UNiagaraSystem;
+class AWeapon;
 
 UCLASS()
 class YGMACTIONGAME_API ABaseCharacter : public ACharacter
@@ -35,6 +36,8 @@ private:
 	virtual void Die();
 
 public:
+	AWeapon* GetWeapon() const { return Weapon; }
+
 	bool IsAlive() const;
 	float GetAttackDamage() const;
 	float GetAttackSpeed() const;
@@ -46,6 +49,7 @@ private:
 	void HideHealthBar();
 	void DisableCapsule();
 	void SetRagDoll();
+	void SetWeapon();
 
 protected:
 	// Components
@@ -66,4 +70,14 @@ private:
 	// Effects
 	UPROPERTY(EditAnywhere, Category = "Effects")
 	UNiagaraSystem* AttackEffect;
+
+	// Weapon
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<AWeapon> WeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	FName SocketName;
+	
+	UPROPERTY()
+	AWeapon* Weapon;
 };

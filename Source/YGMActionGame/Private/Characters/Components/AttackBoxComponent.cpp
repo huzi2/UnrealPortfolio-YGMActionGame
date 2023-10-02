@@ -30,16 +30,16 @@ void UAttackBoxComponent::BeginPlay()
 
 void UAttackBoxComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor == GetOwner()) return;
+	SetOwnerCharacter();
+
+	if (!OwnerCharacter) return;
+	if (!CheckTarget(OtherActor)) return;
 
 	FHitResult BoxHit;
 	BoxTrace(BoxHit);
 
 	if (BoxHit.GetActor())
 	{
-		ABaseCharacter* OwnerCharacter = Cast<ABaseCharacter>(GetOwner());
-		if (!OwnerCharacter) return;
-
 		//const FVector& HitPoint = BoxHit.ImpactPoint;
 		const FVector& HitPoint = GetComponentLocation();
 
@@ -61,6 +61,25 @@ void UAttackBoxComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
 	}
 }
 
+void UAttackBoxComponent::SetOwnerCharacter()
+{
+	if (GetOwner()->ActorHasTag(TEXT("Weapon")))
+	{
+		OwnerCharacter = Cast<ABaseCharacter>(GetOwner()->GetOwner());
+	}
+	else
+	{
+		OwnerCharacter = Cast<ABaseCharacter>(GetOwner());
+	}
+}
+
+bool UAttackBoxComponent::CheckTarget(AActor* OtherActor)
+{
+	if (OtherActor == OwnerCharacter) return false;
+	if (OtherActor->ActorHasTag(TEXT("Weapon"))) return false;
+	return true;
+}
+
 void UAttackBoxComponent::BoxTrace(FHitResult& BoxHit)
 {
 	const FVector& BoxOrigin = GetComponentLocation();
@@ -70,14 +89,30 @@ void UAttackBoxComponent::BoxTrace(FHitResult& BoxHit)
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 
 	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(GetOwner());
+	ActorsToIgnore.AddUnique(GetOwner());
+	ActorsToIgnore.AddUnique(OwnerCharacter);
 
-	const bool bHit = UKismetSystemLibrary::BoxTraceSingleForObjects(this, BoxOrigin, BoxOrigin + BoxRotation.Vector() * 1.1f, BoxExtent * 2.f, BoxRotation, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, BoxHit, true);
+	for (AActor* Actor : IgnoreAttackActors)
+	{
+		ActorsToIgnore.AddUnique(Actor);
+	}
+
+	if (UKismetSystemLibrary::BoxTraceSingleForObjects(this, BoxOrigin, BoxOrigin + BoxRotation.Vector() * 1.1f, BoxExtent * 2.f, BoxRotation, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, BoxHit, true))
+	{
+		// 중복 타겟 방지
+		IgnoreAttackActors.AddUnique(BoxHit.GetActor());
+	}
 }
 
 void UAttackBoxComponent::AttackBoxEnable(const bool bEnable)
 {
 	bEnable ? SetCollisionEnabled(ECollisionEnabled::QueryOnly) : SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	if (bEnable)
+	{
+		// 중복 타겟 방지 배열 초기화
+		IgnoreAttackActors.Empty();
+	}
 
 	if (bBoxVisible)
 	{

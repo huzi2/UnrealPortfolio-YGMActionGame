@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "AttackBoxComponent.generated.h"
 
+class ABaseCharacter;
 /**
  * 
  */
@@ -25,6 +26,8 @@ private:
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
+	void SetOwnerCharacter();
+	bool CheckTarget(AActor* OtherActor);
 	void BoxTrace(FHitResult& BoxHit);
 
 public:
@@ -35,6 +38,12 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = "Attack Box")
 	bool bBoxVisible;
+
+	UPROPERTY()
+	ABaseCharacter* OwnerCharacter;
+
+	UPROPERTY()
+	TArray<AActor*> IgnoreAttackActors;
 
 private:
 	float DamageModifier;

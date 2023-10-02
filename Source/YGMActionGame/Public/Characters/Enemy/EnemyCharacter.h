@@ -16,4 +16,12 @@ class YGMACTIONGAME_API AEnemyCharacter : public ABaseCharacter
 	
 private:
 	AEnemyCharacter(const FObjectInitializer& ObjInit);
+
+private:
+	void PlayRunMontage(const FName& SectionName);
+
+private:
+	// Animations
+	UPROPERTY(EditDefaultsOnly, Category = "Animations")
+	UAnimMontage* RunMontage;
 };

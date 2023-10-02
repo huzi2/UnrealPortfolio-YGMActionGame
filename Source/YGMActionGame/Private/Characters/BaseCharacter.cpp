@@ -8,6 +8,7 @@
 #include "Characters/Components/HealthBarComponent.h"
 #include "Animation/CharacterAnimInstance.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Weapon/Weapon.h"
 
 ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjInit)
 	: Super(ObjInit)
@@ -29,6 +30,8 @@ void ABaseCharacter::BeginPlay()
 	{
 		AnimInstance->OnMontageEnded.AddDynamic(this, &ABaseCharacter::OnMontageEnded);
 	}
+
+	SetWeapon();
 }
 
 float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -180,5 +183,18 @@ void ABaseCharacter::SetRagDoll()
 		GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);
 		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 		GetMesh()->SetSimulatePhysics(true);
+	}
+}
+
+void ABaseCharacter::SetWeapon()
+{
+	UWorld* World = GetWorld();
+	if (World && WeaponClass)
+	{
+		Weapon = World->SpawnActor<AWeapon>(WeaponClass);
+		if (Weapon)
+		{
+			Weapon->Equip(GetMesh(), SocketName, this, this);
+		}
 	}
 }
