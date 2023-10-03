@@ -47,6 +47,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjInit)
 	SpeedyMoveInputAction = CreateDefaultSubobject<UInputAction>(TEXT("SpeedyMoveInputAction"));
 	AttackInputAction = CreateDefaultSubobject<UInputAction>(TEXT("AttackInputAction"));
 	SmashInputAction = CreateDefaultSubobject<UInputAction>(TEXT("SmashInputAction"));
+
+	Tags.Add(TEXT("Player"));
 }
 
 void APlayerCharacter::BeginPlay()
@@ -60,6 +62,8 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultInputMappingContext, 0);
 		}
 	}
+
+	PlayerCharacterAnimInstance = Cast<UPlayerCharacterAnimInstance>(CharacterAnimInstance);
 
 	InitializePlayerOverlay();
 
@@ -122,10 +126,9 @@ void APlayerCharacter::ResetState()
 {
 	CharacterState = ECharacterState::ECS_Idle;
 
-	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (AnimInstance)
+	if (PlayerCharacterAnimInstance)
 	{
-		AnimInstance->ResetState();
+		PlayerCharacterAnimInstance->ResetState();
 	}
 }
 
@@ -198,15 +201,12 @@ void APlayerCharacter::SpeedyMove()
 {
 	if (!CanAttack()) return;
 	if (!SpeedyMoveMontage) return;
-
-	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!AnimInstance) return;
-
+	if (!PlayerCharacterAnimInstance) return;
 	if (!UseStamina(20.f)) return;
 
 	RotateToController();
 
-	AnimInstance->PlayMontage(SpeedyMoveMontage);
+	PlayerCharacterAnimInstance->PlayMontage(SpeedyMoveMontage);
 
 	CharacterState = ECharacterState::ECS_SpeedyMove;
 }
@@ -215,10 +215,8 @@ void APlayerCharacter::Attack()
 {
 	if (!CanAttack()) return;
 	if (!AttackMontage) return;
+	if (!PlayerCharacterAnimInstance) return;
 	if (!ActionGameData) return;
-
-	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!AnimInstance) return;
 
 	const TMap<ECharacterState, TPair<FName, ECharacterState>>& AttackInfo_Map = ActionGameData->GetPlayerAttackActionInfo();
 
@@ -227,14 +225,14 @@ void APlayerCharacter::Attack()
 	const TPair<FName, ECharacterState>* AttackInfo = AttackInfo_Map.Find(CharacterState);
 	if (!AttackInfo)
 	{
-		AnimInstance->PlayMontageSection(AttackMontage, TEXT("Attack1"), AttackSpeed);
+		PlayerCharacterAnimInstance->PlayMontageSection(AttackMontage, TEXT("Attack1"), AttackSpeed);
 		CharacterState = ECharacterState::ECS_Attack1;
 		return;
 	}
 
 	RotateToController();
 
-	AnimInstance->PlayMontageSection(AttackMontage, AttackInfo->Key, AttackSpeed);
+	PlayerCharacterAnimInstance->PlayMontageSection(AttackMontage, AttackInfo->Key, AttackSpeed);
 	CharacterState = AttackInfo->Value;
 }
 
@@ -242,10 +240,8 @@ void APlayerCharacter::Smash()
 {
 	if (!CanAttack()) return;
 	if (!SmashMontage) return;
+	if (!PlayerCharacterAnimInstance) return;
 	if (!ActionGameData) return;
-
-	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!AnimInstance) return;
 
 	/*static const TMap<ECharacterState, std::pair<FName, ECharacterState>> SmashInfo_Map = {
 		{ ECharacterState::ECS_Idle, { "Smash0", ECharacterState::ECS_Smash0 }},
@@ -276,7 +272,7 @@ void APlayerCharacter::Smash()
 
 	RotateToController();
 
-	AnimInstance->PlayMontageSection(SmashMontage, SmashInfo->Key, GetAttackSpeed());
+	PlayerCharacterAnimInstance->PlayMontageSection(SmashMontage, SmashInfo->Key, GetAttackSpeed());
 	CharacterState = SmashInfo->Value;
 }
 
@@ -339,16 +335,14 @@ void APlayerCharacter::RotateToController()
 
 bool APlayerCharacter::CanAttack() const
 {
-	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!AnimInstance) return false;
+	if (!PlayerCharacterAnimInstance) return false;
 
-	return AnimInstance->CanAttack();
+	return PlayerCharacterAnimInstance->CanAttack();
 }
 
 bool APlayerCharacter::CanMove() const
 {
-	UPlayerCharacterAnimInstance* AnimInstance = Cast<UPlayerCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!AnimInstance) return false;
+	if (!PlayerCharacterAnimInstance) return false;
 
-	return AnimInstance->CanMove();
+	return PlayerCharacterAnimInstance->CanMove();
 }

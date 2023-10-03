@@ -6,6 +6,9 @@
 #include "Characters/BaseCharacter.h"
 #include "EnemyCharacter.generated.h"
 
+class UPawnSensingComponent;
+class UBehaviorTree;
+class AEnemyAIController;
 /**
  * 
  */
@@ -18,10 +21,28 @@ private:
 	AEnemyCharacter(const FObjectInitializer& ObjInit);
 
 private:
-	void PlayRunMontage(const FName& SectionName);
+	virtual void BeginPlay() final;
+
+protected:
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	float GetMovementDirection() const;
 
 private:
-	// Animations
-	UPROPERTY(EditDefaultsOnly, Category = "Animations")
-	UAnimMontage* RunMontage;
+	UFUNCTION()
+	void PawnSee(APawn* SeenPawn);
+
+public:
+	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
+
+private:
+	// Components
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPawnSensingComponent* PawnSensingComponent;
+	
+	// AI
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UBehaviorTree* BehaviorTree;
+
+	UPROPERTY()
+	AEnemyAIController* EnemyAIController;
 };

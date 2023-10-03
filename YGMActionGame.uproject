@@ -19,7 +19,8 @@
 			"AdditionalDependencies": [
 				"Engine",
 				"UMG",
-				"YGMActionGameSetting"
+				"YGMActionGameSetting",
+				"AIModule"
 			]
 		}
 	],

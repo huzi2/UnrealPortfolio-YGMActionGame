@@ -10,6 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UPlayerOverlay;
+class UPlayerCharacterAnimInstance;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -113,6 +114,9 @@ private:
 
 	UPROPERTY()
 	const UYGMActionGameData* ActionGameData;
+
+	UPROPERTY()
+	UPlayerCharacterAnimInstance* PlayerCharacterAnimInstance;
 
 private:
 	bool bIsSprint;

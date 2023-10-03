@@ -25,10 +25,10 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (AnimInstance)
+	CharacterAnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
+	if (CharacterAnimInstance)
 	{
-		AnimInstance->OnMontageEnded.AddDynamic(this, &ABaseCharacter::OnMontageEnded);
+		CharacterAnimInstance->OnMontageEnded.AddDynamic(this, &ABaseCharacter::OnMontageEnded);
 	}
 
 	SetWeapon();
@@ -66,23 +66,19 @@ void ABaseCharacter::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 void ABaseCharacter::PlayHitReactAnimation(const FVector& ImpactPoint)
 {
 	if (!HitReactMontage) return;
-
-	UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!AnimInstance) return;
+	if (!CharacterAnimInstance) return;
 
 	const FName Section = GetDirectionalName(ImpactPoint);
-	AnimInstance->PlayMontageSection(HitReactMontage, Section);
+	CharacterAnimInstance->PlayMontageSection(HitReactMontage, Section);
 }
 
 void ABaseCharacter::PlayDieAnimation(const FVector& ImpactPoint)
 {
 	if (!DieMontage) return;
-
-	UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!AnimInstance) return;
+	if (!CharacterAnimInstance) return;
 
 	const FName Section = GetDirectionalName(ImpactPoint);
-	AnimInstance->PlayMontageSection(DieMontage, Section);
+	CharacterAnimInstance->PlayMontageSection(DieMontage, Section);
 }
 
 void ABaseCharacter::Die()

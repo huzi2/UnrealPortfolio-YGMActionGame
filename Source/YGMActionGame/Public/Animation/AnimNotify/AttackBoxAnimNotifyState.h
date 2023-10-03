@@ -29,6 +29,15 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DamageModifier;
 
+	UPROPERTY(EditAnywhere)
+	bool bUseWeaponAttackBox;
+
+	UPROPERTY(EditAnywhere)
+	float WeaponDamageModifier;
+
 	UPROPERTY()
 	UAttackBoxComponent* AttackBox;
+
+	UPROPERTY()
+	UAttackBoxComponent* WeaponAttackBox;
 };

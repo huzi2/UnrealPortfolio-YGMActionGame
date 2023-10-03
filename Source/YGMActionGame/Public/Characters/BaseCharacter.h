@@ -9,6 +9,7 @@
 class UAttackBoxComponent;
 class UAttributeComponent;
 class UHealthBarComponent;
+class UCharacterAnimInstance;
 class UNiagaraSystem;
 class AWeapon;
 
@@ -58,6 +59,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UHealthBarComponent* HealthBarComponent;
+
+	UPROPERTY()
+	UCharacterAnimInstance* CharacterAnimInstance;
 
 private:
 	// Animations
