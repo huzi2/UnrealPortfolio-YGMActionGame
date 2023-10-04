@@ -17,3 +17,14 @@ void UCharacterAnimInstance::PlayMontageSection(UAnimMontage* Montage, const FNa
 	Montage_Play(Montage, PlaySpeed);
 	Montage_JumpToSection(SectionName, Montage);
 }
+
+void UCharacterAnimInstance::PlayRandomMontageSection(UAnimMontage* Montage, const float PlaySpeed)
+{
+	if (!Montage) return;
+
+	const TArray<FCompositeSection>& Sections = Montage->CompositeSections;
+
+	const int32 MaxSectionIndex = Sections.Num() - 1;
+	const int32 Selection = FMath::RandRange(0, MaxSectionIndex);
+	PlayMontageSection(Montage, Sections[Selection].SectionName, PlaySpeed);
+}

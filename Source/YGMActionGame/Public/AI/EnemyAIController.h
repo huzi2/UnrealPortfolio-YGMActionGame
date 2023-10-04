@@ -22,7 +22,11 @@ private:
 	virtual void Tick(float DeltaTime) final;
 
 public:
+	FORCEINLINE AActor* GetTargetActor() const { return TargetActor; }
+
 	void SetTargetActor(AActor* Target);
+	bool SetFocusToTarget();
+	float GetFacingTargetAngle() const;
 
 private:
 	AActor* GetFocusOnActor() const;

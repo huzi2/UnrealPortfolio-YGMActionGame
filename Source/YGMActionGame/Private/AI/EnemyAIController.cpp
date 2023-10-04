@@ -38,6 +38,26 @@ void AEnemyAIController::SetTargetActor(AActor* Target)
 	}
 }
 
+bool AEnemyAIController::SetFocusToTarget()
+{
+	if (!TargetActor) return false;
+
+	SetFocus(TargetActor);
+	return true;
+}
+
+float AEnemyAIController::GetFacingTargetAngle() const
+{
+	if (!TargetActor) return 0.f;
+	if (!GetPawn()) return 0.f;
+
+	const FVector ToTarget = (TargetActor->GetActorLocation() - GetPawn()->GetActorLocation()).GetSafeNormal();
+	const FVector ForwardVector = GetPawn()->GetActorForwardVector();
+	const float DotProduct = FVector::DotProduct(ToTarget, ForwardVector);
+	const float Angle = FMath::Acos(DotProduct) * (180.0f / PI);
+	return Angle;
+}
+
 AActor* AEnemyAIController::GetFocusOnActor() const
 {
 	if (!GetBlackboardComponent()) return nullptr;

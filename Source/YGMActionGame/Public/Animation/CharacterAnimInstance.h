@@ -17,4 +17,7 @@ class YGMACTIONGAME_API UCharacterAnimInstance : public UAnimInstance
 public:
 	virtual void PlayMontage(UAnimMontage* Montage, const float PlaySpeed = 1.f);
 	virtual void PlayMontageSection(UAnimMontage* Montage, const FName& SectionName, const float PlaySpeed = 1.f);
+
+public:
+	void PlayRandomMontageSection(UAnimMontage* Montage, const float PlaySpeed = 1.f);
 };

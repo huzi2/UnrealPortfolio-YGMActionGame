@@ -37,7 +37,8 @@ private:
 	virtual void Die();
 
 public:
-	AWeapon* GetWeapon() const { return Weapon; }
+	FORCEINLINE UCharacterAnimInstance* GetCharacterAnimInstance() const { return CharacterAnimInstance; }
+	FORCEINLINE AWeapon* GetWeapon() const { return Weapon; }
 
 	bool IsAlive() const;
 	float GetAttackDamage() const;
