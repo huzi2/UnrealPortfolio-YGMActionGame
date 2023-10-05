@@ -4,37 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTTask_PlayRandomAnimation.generated.h"
+#include "BTTask_PlayAttackAnimation.generated.h"
 
-class ABaseCharacter;
+class AEnemyCharacter;
 class UCharacterAnimInstance;
 /**
  * 
  */
 UCLASS()
-class YGMACTIONGAME_API UBTTask_PlayRandomAnimation : public UBTTaskNode
+class YGMACTIONGAME_API UBTTask_PlayAttackAnimation : public UBTTaskNode
 {
 	GENERATED_BODY()
-
-private:
-	UBTTask_PlayRandomAnimation();
 	
+private:
+	UBTTask_PlayAttackAnimation();
+
 private:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) final;
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) final;
 
 private:
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* Animation;
-
-	UPROPERTY(EditAnywhere)
-	bool bCheckAttackSpeed;
-
-	UPROPERTY(EditAnywhere)
 	bool bFixAngle;
 
 	UPROPERTY()
-	ABaseCharacter* Character;
+	UAnimMontage* Animation;
+
+	UPROPERTY()
+	AEnemyCharacter* Character;
 
 	UPROPERTY()
 	UCharacterAnimInstance* CharacterAnimInstance;

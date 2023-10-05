@@ -45,6 +45,8 @@ public:
 	float GetAttackSpeed() const;
 	UAttackBoxComponent* GetAttackBox(const FName& AttackBoxName);
 	void PlayAttackEffect(const FVector& EffectLocation);
+	void FixMeshYawAngle();
+	void UnFixMeshYawAngle();
 
 private:
 	const FName GetDirectionalName(const FVector& ImpactPoint);
@@ -82,7 +84,11 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	FName SocketName;
-	
+
+	// Fix
+	UPROPERTY(EditAnywhere, Category = "Fix")
+	float FixMeshYawAngleValue;
+
 	UPROPERTY()
 	AWeapon* Weapon;
 };

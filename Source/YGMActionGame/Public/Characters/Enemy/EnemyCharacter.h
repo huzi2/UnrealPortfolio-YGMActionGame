@@ -8,6 +8,7 @@
 #include "EnemyCharacter.generated.h"
 
 class UPawnSensingComponent;
+class UMotionWarpingComponent;
 class UBehaviorTree;
 class AEnemyAIController;
 
@@ -56,17 +57,35 @@ public:
 	FORCEINLINE void SetEnemyState(const EEnemyState State) { EnemyState = State; }
 
 	void CheckTargetDistance();
-	UAnimMontage* GetAttackRangeMontage(const float DistanceToTarget) const;
-	
+	UAnimMontage* GetAttackRangeMontage() const;
 
+private:
+	float GetTargetDistance() const;
+	void MotionWarpingToTarget();
+	
 private:
 	// Components
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UMotionWarpingComponent* MotionWarpingComponent;
+
 	// Animations
 	UPROPERTY(EditDefaultsOnly, Category = "Animations")
 	UAnimMontage* SpawnMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	TArray<FEnemyAttackRangeMontage> EnemyAttackRangeMontages;
+
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* LeftAttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* RightAttackMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* BackAttackMontage;
 	
 	// AI
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
@@ -79,10 +98,10 @@ private:
 	float CheckRange;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
-	float AttackRange;
+	float MaxAttackRange;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
-	TArray<FEnemyAttackRangeMontage> EnemyAttackRangeMontages;
+	float MinAttackRange;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	bool bDrawDebugRange;

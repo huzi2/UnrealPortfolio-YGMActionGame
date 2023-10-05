@@ -4,6 +4,7 @@
 #include "AIController.h"
 #include "Characters/Enemy/EnemyCharacter.h"
 
+// 지금 사용할 곳이 없음. 마지막까지 없으면 지우기
 UBTTask_ChangeEnemyState::UBTTask_ChangeEnemyState()
 {
 	NodeName = TEXT("Change Enemy State");

@@ -6,7 +6,6 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTTask_RotateToTarget.generated.h"
 
-class AEnemyAIController;
 /**
  * 
  */
@@ -21,11 +20,21 @@ private:
 private:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) final;
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) final;
+	virtual FString GetStaticDescription() const final;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "Blackboard")
+	FBlackboardKeySelector TargetActorKey;
+
 	UPROPERTY(EditAnywhere)
 	float AcceptanceAngle;
 
 	UPROPERTY()
-	AEnemyAIController* EnemyAIController;
+	AAIController* AIController;
+
+	UPROPERTY()
+	AActor* MainActor;
+
+	UPROPERTY()
+	AActor* TargetActor;
 };

@@ -22,19 +22,11 @@ private:
 	virtual void Tick(float DeltaTime) final;
 
 public:
-	FORCEINLINE AActor* GetTargetActor() const { return TargetActor; }
-
+	AActor* GetTargetActor() const;
 	void SetTargetActor(AActor* Target);
-	bool SetFocusToTarget();
 	float GetFacingTargetAngle() const;
 
 private:
-	AActor* GetFocusOnActor() const;
-
-private:
 	UPROPERTY(EditAnywhere, Category = "AI")
-	FName FocusOnKeyName;
-
-	UPROPERTY()
-	AActor* TargetActor;
+	FName TargetActorKeyName;
 };

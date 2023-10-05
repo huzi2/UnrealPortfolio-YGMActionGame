@@ -3,6 +3,15 @@
 #pragma once
 
 UENUM(BlueprintType)
+enum class EDir : uint8
+{
+	ED_Front UMETA(DisplayName = "Front"),
+	ED_Left UMETA(DisplayName = "Left"),
+	ED_Right UMETA(DisplayName = "Right"),
+	ED_Back UMETA(DisplayName = "Back")
+};
+
+UENUM(BlueprintType)
 enum class EEnemyState : uint8
 {
 	EES_NoState UMETA(DisplayName = "NoState"),
