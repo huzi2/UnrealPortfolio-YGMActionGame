@@ -29,6 +29,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float AcceptanceAngle;
 
+	UPROPERTY(EditAnywhere)
+	bool bCheckAttackDirection;
+
 	UPROPERTY()
 	AAIController* AIController;
 

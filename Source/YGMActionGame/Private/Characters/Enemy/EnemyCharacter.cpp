@@ -19,6 +19,7 @@ AEnemyCharacter::AEnemyCharacter(const FObjectInitializer& ObjInit)
 	, MinAttackRange(150.f)
 	, bDrawDebugRange(false)
 	, EnemyState(EEnemyState::EES_Idle)
+	, AttackDirection(EDir::ED_Front)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -65,36 +66,23 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bDrawDebugRange && GetWorld())
-	{
-		DrawDebugSphere(GetWorld(), GetActorLocation(), SightRange, 12, FColor::Blue, false, -1.f);
-		DrawDebugSphere(GetWorld(), GetActorLocation(), CheckRange, 12, FColor::Orange, false, -1.f);
-		DrawDebugSphere(GetWorld(), GetActorLocation(), MaxAttackRange, 12, FColor::Red, false, -1.f);
-		DrawDebugSphere(GetWorld(), GetActorLocation(), MinAttackRange, 12, FColor::Purple, false, -1.f);
-	}
-
+	DrawDebugAISphere();
 	MotionWarpingToTarget();
 }
 
 float AEnemyCharacter::GetMovementDirection() const
 {
-	if (GetVelocity().IsZero()) return 0.f;
-
-	const FVector VelocityNormal = GetVelocity().GetSafeNormal();
-	const float AngleBetween = FMath::Acos(FVector::DotProduct(GetActorForwardVector(), VelocityNormal));
-	const FVector CrossProduct = FVector::CrossProduct(GetActorForwardVector(), VelocityNormal);
-	const float Degree = FMath::RadiansToDegrees(AngleBetween);
-	return CrossProduct.IsZero() ? Degree : Degree * FMath::Sign(CrossProduct.Z);
+	return UYGMActionGameLibrary::GetMovementDirection(GetVelocity(), GetActorForwardVector());
 }
 
 void AEnemyCharacter::PawnSee(APawn* SeenPawn)
 {
 	if (!SeenPawn) return;
 	if (!EnemyAIController) return;
-	if (EnemyAIController->GetTargetActor()) return;
+	if (EnemyAIController->GetTargetActor() == SeenPawn) return;
 
 	EnemyAIController->SetTargetActor(SeenPawn);
-	CheckTargetDistance();
+	EnemyState = EEnemyState::EES_Check;
 }
 
 void AEnemyCharacter::CheckTargetDistance()
@@ -125,46 +113,133 @@ void AEnemyCharacter::CheckTargetDistance()
 	{
 		EnemyState = EEnemyState::EES_Attack;
 	}
+
+	if (EnemyState == EEnemyState::EES_Attack)
+	{
+		SetAttackDirection();
+	}
 }
 
 UAnimMontage* AEnemyCharacter::GetAttackRangeMontage() const
 {
-	const float DistanceToTarget = GetTargetDistance();
-
-	// 타겟의 방향에 따른 공격부터 확인
-	if (LeftAttackMontage && RightAttackMontage && DistanceToTarget <= MinAttackRange)
+	if (AttackDirection == EDir::ED_Front)
 	{
-		AActor* TargetActor = EnemyAIController->GetTargetActor();
-		if (TargetActor)
+		const float DistanceToTarget = GetTargetDistance();
+
+		for (const FEnemyAttackRangeMontage& EnemyAttackRangeMontage : EnemyAttackRangeMontages)
 		{
-			const EDir Direction = UYGMActionGameLibrary::GetDirection(this, TargetActor->GetActorLocation());
-			switch (Direction)
+			if (DistanceToTarget >= EnemyAttackRangeMontage.MinAttackRange && DistanceToTarget <= EnemyAttackRangeMontage.MaxAttackRange)
 			{
-			case EDir::ED_Left:
-				if (LeftAttackMontage) return LeftAttackMontage;
-				
-				break;
-			case EDir::ED_Right:
-				if (RightAttackMontage) return RightAttackMontage;
-				break;
-			case EDir::ED_Back:
-				if (BackAttackMontage) return BackAttackMontage;
-				break;
-			default:
-				break;
+				return EnemyAttackRangeMontage.AttackMontage;
 			}
 		}
 	}
-
-	// 그 다음 타겟의 거리에 따른 공격 확인
-	for (const FEnemyAttackRangeMontage& EnemyAttackRangeMontage : EnemyAttackRangeMontages)
+	else
 	{
-		if (DistanceToTarget >= EnemyAttackRangeMontage.MinAttackRange && DistanceToTarget <= EnemyAttackRangeMontage.MaxAttackRange)
+		return DirectionAttackMontages[AttackDirection];
+	}
+	return nullptr;
+}
+
+void AEnemyCharacter::CheckNextState()
+{
+	if (!EnemyAIController) return;
+
+	AActor* TargetActor = EnemyAIController->GetTargetActor();
+	// 타겟이 없으면 계속 Idle 상태
+	if (!TargetActor)
+	{
+		EnemyState = EEnemyState::EES_Idle;
+		return;
+	}
+
+	const float DistanceToTarget = UYGMActionGameLibrary::GetDistance(TargetActor->GetActorLocation(), GetActorLocation());
+
+	// 적이 인식 거리 밖이면 타겟 해제 후 Idle
+	if (DistanceToTarget > SightRange)
+	{
+		EnemyAIController->SetTargetActor(nullptr);
+		EnemyState = EEnemyState::EES_Idle;
+		return;
+	}
+
+	const EDir DirectionToTarget = UYGMActionGameLibrary::GetDirection(this, TargetActor->GetActorLocation());
+
+	switch (EnemyState)
+	{
+	case EEnemyState::EES_Check: // 적이 인식 거리 안에 있어서 다음 행동을 준비
+		// 적이 최대 공격 사거리를 벗어나 있다면
+		if (DistanceToTarget > MaxAttackRange)
+		{
+			// 최소 공격 사거리와 최대 공격 사거리 사이의 범위로 적에게 돌진
+			EnemyState = EEnemyState::EES_Dash;
+		}
+		// 적이 최대 공격 사거리 안에 있다면
+		else
+		{
+			// 정면이면 바로 공격
+			if (DirectionToTarget == EDir::ED_Front)
+			{
+				EnemyState = EEnemyState::EES_Attack;
+			}
+			else
+			{
+				// 회전 혹은 회전이 포함된 공격 몽타주 실행. 공격 몽타주가 있다면 50% 확률로 발동
+				NextAttackMontage = GetAttackMontage(DistanceToTarget, DirectionToTarget);
+				if (UYGMActionGameLibrary::CheckPercentage(50) && NextAttackMontage)
+				{
+					EnemyState = EEnemyState::EES_Attack;
+				}
+				else
+				{
+					NextAttackMontage = nullptr;
+					EnemyState = EEnemyState::EES_Rotate;
+				}
+			}
+		}
+		break;
+	case EEnemyState::EES_Rotate: // 적이 정면이 아니라 회전해야함
+		// 회전 후에 다시 확인
+		EnemyState = EEnemyState::EES_Check;
+		break;
+	case EEnemyState::EES_Dash: // 적이 정면이 아니라 회전해야함
+		// 돌진 후에 다시 확인
+		EnemyState = EEnemyState::EES_Check;
+		break;
+	case EEnemyState::EES_Attack: // 사거리와 방향이 모두 적절하면 공격 수행
+		NextAttackMontage = nullptr;
+		// 공격 후 다시 확인
+		EnemyState = EEnemyState::EES_Check;
+		break;
+	default:
+		break;
+	}
+}
+
+UAnimMontage* AEnemyCharacter::GetAttackMontage(const float DistanceToTarget, const EDir DirectionToTarget)
+{
+	// 예약 공격이 있으면 먼저 수행
+	if (NextAttackMontage) return NextAttackMontage;
+
+	for (const FEnemyAttackRangeMontage& EnemyAttackRangeMontage : EnemyAttackMontages[DirectionToTarget].EnemyAttackRangeMontageArray)
+	{
+		if (EnemyAttackRangeMontage.MinAttackRange <= DistanceToTarget && EnemyAttackRangeMontage.MaxAttackRange <= DistanceToTarget)
 		{
 			return EnemyAttackRangeMontage.AttackMontage;
 		}
 	}
 	return nullptr;
+}
+
+void AEnemyCharacter::DrawDebugAISphere()
+{
+	if (bDrawDebugRange && GetWorld())
+	{
+		DrawDebugSphere(GetWorld(), GetActorLocation(), SightRange, 12, FColor::Blue, false, -1.f);
+		DrawDebugSphere(GetWorld(), GetActorLocation(), CheckRange, 12, FColor::Orange, false, -1.f);
+		DrawDebugSphere(GetWorld(), GetActorLocation(), MaxAttackRange, 12, FColor::Red, false, -1.f);
+		DrawDebugSphere(GetWorld(), GetActorLocation(), MinAttackRange, 12, FColor::Purple, false, -1.f);
+	}
 }
 
 float AEnemyCharacter::GetTargetDistance() const
@@ -174,7 +249,21 @@ float AEnemyCharacter::GetTargetDistance() const
 	AActor* TargetActor = EnemyAIController->GetTargetActor();
 	if (!TargetActor) return 0.f;
 
-	return static_cast<float>((TargetActor->GetActorLocation() - GetActorLocation()).Size());
+	return UYGMActionGameLibrary::GetDistance(TargetActor->GetActorLocation(), GetActorLocation());
+}
+
+void AEnemyCharacter::SetAttackDirection()
+{
+	AActor* TargetActor = EnemyAIController->GetTargetActor();
+	if (!TargetActor) return;
+
+	const float DistanceToTarget = GetTargetDistance();
+	if (DistanceToTarget <= MinAttackRange)
+	{
+		AttackDirection = UYGMActionGameLibrary::GetDirection(this, TargetActor->GetActorLocation());
+		if (AttackDirection != EDir::ED_Front && DirectionAttackMontages[AttackDirection]) return;
+	}
+	AttackDirection = EDir::ED_Front;
 }
 
 void AEnemyCharacter::MotionWarpingToTarget()

@@ -13,6 +13,11 @@ float UYGMActionGameLibrary::GetAngleActorToActor(AActor* MainActor, AActor* Tar
 	return Angle;
 }
 
+float UYGMActionGameLibrary::GetDistance(const FVector& Location1, const FVector& Location2)
+{
+	return static_cast<float>((Location1 - Location2).Size());
+}
+
 EDir UYGMActionGameLibrary::GetDirection(const AActor* MainActor, const FVector& TargetLocation)
 {
 	if (!MainActor) return EDir::ED_Front;
@@ -52,6 +57,17 @@ EDir UYGMActionGameLibrary::GetDirection(const AActor* MainActor, const FVector&
 	}
 	// -135 ~ 135µµ
 	return EDir::ED_Back;
+}
+
+float UYGMActionGameLibrary::GetMovementDirection(const FVector& Velocity, const FVector& Forward)
+{
+	if (Velocity.IsZero()) return 0.f;
+
+	const FVector VelocityNormal = Velocity.GetSafeNormal();
+	const float AngleBetween = FMath::Acos(FVector::DotProduct(Forward, VelocityNormal));
+	const FVector CrossProduct = FVector::CrossProduct(Forward, VelocityNormal);
+	const float Degree = FMath::RadiansToDegrees(AngleBetween);
+	return CrossProduct.IsZero() ? Degree : Degree * FMath::Sign(CrossProduct.Z);
 }
 
 bool UYGMActionGameLibrary::CheckPercentage(const int32 Percent)

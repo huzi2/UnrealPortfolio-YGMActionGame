@@ -37,28 +37,7 @@ void UAttackBoxComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
 
 	FHitResult BoxHit;
 	BoxTrace(BoxHit);
-
-	if (BoxHit.GetActor())
-	{
-		//const FVector& HitPoint = BoxHit.ImpactPoint;
-		const FVector& HitPoint = GetComponentLocation();
-
-		OwnerCharacter->PlayAttackEffect(BoxHit.ImpactPoint);
-
-		UGameplayStatics::ApplyDamage(BoxHit.GetActor(), OwnerCharacter->GetAttackDamage() * DamageModifier, OwnerCharacter->GetController(), OwnerCharacter, UDamageType::StaticClass());
-
-		ABaseCharacter* Character = Cast<ABaseCharacter>(BoxHit.GetActor());
-		if (!Character) return;
-
-		if (Character->IsAlive())
-		{
-			Character->PlayHitReactAnimation(HitPoint);
-		}
-		else
-		{
-			Character->PlayDieAnimation(HitPoint);
-		}
-	}
+	HitTarget(BoxHit);
 }
 
 void UAttackBoxComponent::SetOwnerCharacter()
@@ -101,6 +80,30 @@ void UAttackBoxComponent::BoxTrace(FHitResult& BoxHit)
 	{
 		// 중복 타겟 방지
 		IgnoreAttackActors.AddUnique(BoxHit.GetActor());
+	}
+}
+
+void UAttackBoxComponent::HitTarget(const FHitResult& BoxHit)
+{
+	if (!BoxHit.GetActor()) return;
+
+	//const FVector& HitPoint = BoxHit.ImpactPoint;
+	const FVector& HitPoint = GetComponentLocation();
+
+	OwnerCharacter->PlayAttackEffect(BoxHit.ImpactPoint);
+
+	UGameplayStatics::ApplyDamage(BoxHit.GetActor(), OwnerCharacter->GetAttackDamage() * DamageModifier, OwnerCharacter->GetController(), OwnerCharacter, UDamageType::StaticClass());
+
+	ABaseCharacter* Character = Cast<ABaseCharacter>(BoxHit.GetActor());
+	if (!Character) return;
+
+	if (Character->IsAlive())
+	{
+		Character->PlayHitReactAnimation(HitPoint);
+	}
+	else
+	{
+		Character->PlayDieAnimation(HitPoint);
 	}
 }
 

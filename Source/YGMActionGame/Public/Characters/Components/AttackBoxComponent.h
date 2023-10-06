@@ -29,6 +29,7 @@ private:
 	void SetOwnerCharacter();
 	bool CheckTarget(AActor* OtherActor);
 	void BoxTrace(FHitResult& BoxHit);
+	void HitTarget(const FHitResult& BoxHit);
 
 public:
 	FORCEINLINE void SetDamageModifier(const float Modifier) { DamageModifier = Modifier; }

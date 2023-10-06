@@ -182,8 +182,10 @@ void ABaseCharacter::SetRagDoll()
 
 void ABaseCharacter::SetWeapon()
 {
+	if (!WeaponClass) return;
+
 	UWorld* World = GetWorld();
-	if (World && WeaponClass)
+	if (World)
 	{
 		Weapon = World->SpawnActor<AWeapon>(WeaponClass);
 		if (Weapon)

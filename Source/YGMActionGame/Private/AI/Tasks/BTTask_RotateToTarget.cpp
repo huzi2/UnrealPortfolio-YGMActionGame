@@ -4,10 +4,12 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/Enemy/EnemyCharacter.h"
 #include "YGMActionGameLibrary.h"
 
 UBTTask_RotateToTarget::UBTTask_RotateToTarget()
 	: AcceptanceAngle(15.f)
+	, bCheckAttackDirection(true)
 {
 	NodeName = TEXT("Rotate To Target");
 	bNotifyTick = true;
@@ -28,6 +30,13 @@ EBTNodeResult::Type UBTTask_RotateToTarget::ExecuteTask(UBehaviorTreeComponent& 
 
 	MainActor = AIController->GetPawn();
 	if (!MainActor) return EBTNodeResult::Failed;
+
+	// 정면 방향 공격이 아니면 회전할 필요 없음
+	if (bCheckAttackDirection)
+	{
+		AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(MainActor);
+		if (EnemyCharacter && EnemyCharacter->GetAttackDirection() != EDir::ED_Front) return EBTNodeResult::Succeeded;
+	}
 
 	AIController->SetFocus(TargetActor);
 

@@ -64,10 +64,9 @@ void APlayerCharacter::BeginPlay()
 	}
 
 	PlayerCharacterAnimInstance = Cast<UPlayerCharacterAnimInstance>(CharacterAnimInstance);
+	ActionGameData = GetDefault<UYGMActionGameData>();
 
 	InitializePlayerOverlay();
-
-	ActionGameData = GetDefault<UYGMActionGameData>();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -92,15 +91,7 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (AttributeComponent)
-	{
-		AttributeComponent->RegenStamina(DeltaSeconds);
-
-		if (PlayerOverlay)
-		{
-			PlayerOverlay->SetStaminaBarPercent(AttributeComponent->GetStaminaPercent());
-		}
-	}
+	RegenStamina(DeltaSeconds);
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -320,6 +311,19 @@ bool APlayerCharacter::UseStamina(const float StaminaCost)
 		SetHUDStamina();
 	}
 	return bResult;
+}
+
+void APlayerCharacter::RegenStamina(const float DeltaSeconds)
+{
+	if (AttributeComponent)
+	{
+		AttributeComponent->RegenStamina(DeltaSeconds);
+
+		if (PlayerOverlay)
+		{
+			PlayerOverlay->SetStaminaBarPercent(AttributeComponent->GetStaminaPercent());
+		}
+	}
 }
 
 void APlayerCharacter::StopAnimation()

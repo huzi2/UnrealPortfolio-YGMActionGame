@@ -55,6 +55,7 @@ private:
 	void SetHUDHealth();
 	void SetHUDStamina();
 	bool UseStamina(const float StaminaCost);
+	void RegenStamina(const float DeltaSeconds);
 	void StopAnimation();
 	void RotateToController();
 	bool CanAttack() const;

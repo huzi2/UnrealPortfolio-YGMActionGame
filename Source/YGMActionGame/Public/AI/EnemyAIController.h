@@ -19,12 +19,10 @@ private:
 
 private:
 	virtual void OnPossess(APawn* InPawn) final;
-	virtual void Tick(float DeltaTime) final;
 
 public:
 	AActor* GetTargetActor() const;
 	void SetTargetActor(AActor* Target);
-	float GetFacingTargetAngle() const;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "AI")
