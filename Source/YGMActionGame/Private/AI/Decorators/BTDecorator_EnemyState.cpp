@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AI/Decorators/BTDecorator_EnemyState.h"
-#include "AIController.h"
-#include "Characters/Enemy/EnemyCharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 UBTDecorator_EnemyState::UBTDecorator_EnemyState()
 	: CheckEnemyState(EEnemyState::EES_NoState)
@@ -12,13 +11,12 @@ UBTDecorator_EnemyState::UBTDecorator_EnemyState()
 
 bool UBTDecorator_EnemyState::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	AAIController* Controller = OwnerComp.GetAIOwner();
-	if (!Controller) return false;
+	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+	if (!BlackboardComp) return false;
 
-	AEnemyCharacter* Character = Cast<AEnemyCharacter>(Controller->GetPawn());
-	if (!Character) return false;
+	EEnemyState State = static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("EnemyState")));
 
-	return Character->GetEnemyState() == CheckEnemyState ? true : false;
+	return CheckEnemyState == State ? true : false;
 }
 
 FString UBTDecorator_EnemyState::GetStaticDescription() const

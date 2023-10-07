@@ -24,7 +24,21 @@ public:
 	AActor* GetTargetActor() const;
 	void SetTargetActor(AActor* Target);
 
+	uint8 GetEnemyState() const;
+	void SetEnemyState(const uint8 EnmeyState);
+
+	void SetAttackRange(const float MinAttackRange, const float MaxAttackRange);
+
 private:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	FName TargetActorKeyName;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	FName EnemyStateKeyName;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	FName MinAttackRagneKeyName;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	FName MaxAttackRagneKeyName;
 };

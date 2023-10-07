@@ -20,7 +20,7 @@ EBTNodeResult::Type UBTTask_PlayAttackAnimation::ExecuteTask(UBehaviorTreeCompon
 	Character = Cast<AEnemyCharacter>(Controller->GetPawn());
 	if (!Character) return EBTNodeResult::Failed;
 
-	Animation = Character->GetAttackRangeMontage();
+	Animation = Character->GetNextAttackMontage();
 	if (!Animation) return EBTNodeResult::Succeeded;
 
 	CharacterAnimInstance = Character->GetCharacterAnimInstance();

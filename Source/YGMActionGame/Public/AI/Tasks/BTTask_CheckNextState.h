@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTTask_CheckTargetDistance.generated.h"
+#include "BTTask_CheckNextState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class YGMACTIONGAME_API UBTTask_CheckTargetDistance : public UBTTaskNode
+class YGMACTIONGAME_API UBTTask_CheckNextState : public UBTTaskNode
 {
 	GENERATED_BODY()
 	
 private:
-	UBTTask_CheckTargetDistance();
+	UBTTask_CheckNextState();
 
 private:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) final;

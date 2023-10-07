@@ -64,21 +64,15 @@ private:
 
 public:
 	FORCEINLINE UBehaviorTree* GetBehaviorTree() const { return BehaviorTree; }
-	FORCEINLINE EEnemyState GetEnemyState() const { return EnemyState; }
-	FORCEINLINE EDir GetAttackDirection() const { return AttackDirection; }
-	FORCEINLINE void SetEnemyState(const EEnemyState State) { EnemyState = State; }
+	FORCEINLINE UAnimMontage* GetNextAttackMontage() const { return NextAttackMontage; }
 
-	void CheckTargetDistance();
-	UAnimMontage* GetAttackRangeMontage() const;
-
-	// AI 임시
 	void CheckNextState();
-	UAnimMontage* GetAttackMontage(const float DistanceToTarget, const EDir DirectionToTarget);
 
 private:
+	UAnimMontage* GetAttackMontage(const float DistanceToTarget, const EDir DirectionToTarget);
+
+	void SetEnemyState(const EEnemyState State);
 	void DrawDebugAISphere();
-	float GetTargetDistance() const;
-	void SetAttackDirection();
 	void MotionWarpingToTarget();
 	
 private:
@@ -94,17 +88,7 @@ private:
 	UAnimMontage* SpawnMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
-	TArray<FEnemyAttackRangeMontage> EnemyAttackRangeMontages;
-
-	UPROPERTY(EditAnywhere, Category = "Animations")
-	TMap<EDir, UAnimMontage*> DirectionAttackMontages;
-
-	// AI 임시
-	UPROPERTY(EditAnywhere, Category = "Animations")
 	TMap<EDir, FEnemyAttackRangeMontageArray> EnemyAttackMontages;
-
-	UPROPERTY()
-	UAnimMontage* NextAttackMontage;
 	
 	// AI
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
@@ -113,9 +97,6 @@ private:
 	// 타겟을 인식하는 거리. 벗어나면 타겟 해제
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float SightRange;
-
-	UPROPERTY(EditAnywhere, Category = "AI")
-	float CheckRange;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float MaxAttackRange;
@@ -129,7 +110,6 @@ private:
 	UPROPERTY()
 	AEnemyAIController* EnemyAIController;
 
-private:
-	EEnemyState EnemyState;
-	EDir AttackDirection;
+	UPROPERTY()
+	UAnimMontage* NextAttackMontage;
 };

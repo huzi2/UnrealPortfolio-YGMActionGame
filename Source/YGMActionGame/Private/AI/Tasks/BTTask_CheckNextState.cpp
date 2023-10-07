@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "AI/Tasks/BTTask_CheckTargetDistance.h"
+#include "AI/Tasks/BTTask_CheckNextState.h"
 #include "AIController.h"
 #include "Characters/Enemy/EnemyCharacter.h"
 
-UBTTask_CheckTargetDistance::UBTTask_CheckTargetDistance()
+UBTTask_CheckNextState::UBTTask_CheckNextState()
 {
-	NodeName = TEXT("Check Target Distance");
+	NodeName = TEXT("Check Next State");
 }
 
-EBTNodeResult::Type UBTTask_CheckTargetDistance::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_CheckNextState::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* Controller = OwnerComp.GetAIOwner();
 	if (!Controller) return EBTNodeResult::Failed;
@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTTask_CheckTargetDistance::ExecuteTask(UBehaviorTreeCompon
 	AEnemyCharacter* Character = Cast<AEnemyCharacter>(Controller->GetPawn());
 	if (!Character) return EBTNodeResult::Failed;
 
-	Character->CheckTargetDistance();
+	Character->CheckNextState();
 
 	return EBTNodeResult::Succeeded;
 }
