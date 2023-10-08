@@ -15,7 +15,12 @@ void UCharacterAnimInstance::PlayMontageSection(UAnimMontage* Montage, const FNa
 	if (!Montage) return;
 
 	Montage_Play(Montage, PlaySpeed);
-	Montage_JumpToSection(SectionName, Montage);
+
+	const int32 SectionIndex = Montage->GetSectionIndex(SectionName);
+	if (SectionIndex != INDEX_NONE)
+	{
+		Montage_JumpToSection(SectionName, Montage);
+	}
 }
 
 void UCharacterAnimInstance::PlayRandomMontageSection(UAnimMontage* Montage, const float PlaySpeed)

@@ -125,21 +125,30 @@ void AEnemyCharacter::CheckNextState()
 			const EDir DirectionToTarget = UYGMActionGameLibrary::GetDirection(this, TargetActor->GetActorLocation());
 			// 공격 상태에서 사용할 공격 애니메이션 확인
 			NextAttackMontage = GetAttackMontage(DistanceToTarget, DirectionToTarget);
-			// 정면이면 바로 공격
-			if (DirectionToTarget == EDir::ED_Front)
+
+			// 설정된 공격이 없거나 확률로 공격이 정해지지 않았으면 이동
+			if (!NextAttackMontage)
 			{
-				SetEnemyState(EEnemyState::EES_Attack);
+				SetEnemyState(EEnemyState::EES_Dash);
 			}
 			else
 			{
-				// 회전 혹은 회전이 포함된 공격 몽타주 실행. 공격 몽타주가 있다면 50% 확률로 발동
-				if (UYGMActionGameLibrary::CheckPercentage(50) && NextAttackMontage)
+				// 정면이면 바로 공격
+				if (DirectionToTarget == EDir::ED_Front)
 				{
 					SetEnemyState(EEnemyState::EES_Attack);
 				}
 				else
 				{
-					SetEnemyState(EEnemyState::EES_Rotate);
+					// 회전 혹은 회전이 포함된 공격 몽타주 실행. 공격 몽타주가 있다면 50% 확률로 발동
+					if (UYGMActionGameLibrary::CheckPercentage(50) && NextAttackMontage)
+					{
+						SetEnemyState(EEnemyState::EES_Attack);
+					}
+					else
+					{
+						SetEnemyState(EEnemyState::EES_Rotate);
+					}
 				}
 			}
 		}
@@ -163,7 +172,10 @@ UAnimMontage* AEnemyCharacter::GetAttackMontage(const float DistanceToTarget, co
 	{
 		if (EnemyAttackRangeMontage.MinAttackRange <= DistanceToTarget && EnemyAttackRangeMontage.MaxAttackRange >= DistanceToTarget)
 		{
-			return EnemyAttackRangeMontage.AttackMontage;
+			if (UYGMActionGameLibrary::CheckPercentage(EnemyAttackRangeMontage.AttackPercentage))
+			{
+				return EnemyAttackRangeMontage.AttackMontage;
+			}
 		}
 	}
 	return nullptr;

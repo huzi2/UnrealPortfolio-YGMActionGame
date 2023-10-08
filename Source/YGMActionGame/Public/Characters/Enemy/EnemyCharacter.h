@@ -26,6 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float MaxAttackRange;
+
+	UPROPERTY(EditAnywhere)
+	int32 AttackPercentage = 100;
 };
 
 // TMap에 넣기 위한 배열. 그냥 넣으면 UPROPERTY에서 에러가 뜬다.
