@@ -33,7 +33,7 @@ public:
 	virtual void PlayHitReactAnimation(const FVector& ImpactPoint);
 	virtual void PlayDieAnimation(const FVector& ImpactPoint);
 
-private:
+protected:
 	virtual void Die();
 
 public:

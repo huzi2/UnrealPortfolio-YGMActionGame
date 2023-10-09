@@ -70,6 +70,14 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	MotionWarpingToTarget();
 }
 
+void AEnemyCharacter::Die()
+{
+	Super::Die();
+
+	GetCharacterMovement()->DisableMovement();
+	SetLifeSpan(5.f);
+}
+
 float AEnemyCharacter::GetMovementDirection() const
 {
 	return UYGMActionGameLibrary::GetMovementDirection(GetVelocity(), GetActorForwardVector());

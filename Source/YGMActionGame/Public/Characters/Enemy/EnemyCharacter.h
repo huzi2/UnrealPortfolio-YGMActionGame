@@ -57,6 +57,9 @@ private:
 	virtual void BeginPlay() final;
 	virtual void Tick(float DeltaTime) final;
 
+private:
+	virtual void Die() final;
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "Movement")
 	float GetMovementDirection() const;
