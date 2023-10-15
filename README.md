@@ -2,6 +2,10 @@
 
 <img width="900" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/ab44b0a7-cc73-4d0f-9c8c-d25691daf78a">
 
+## 프로젝트 영상
+
+[![Video Label](http://img.youtube.com/vi/9AO-G4ecnsI/0.jpg)]
+
 ## 프로젝트 개요
 언리얼 5.3 C++을 활용한 3인칭 액션 게임
 
