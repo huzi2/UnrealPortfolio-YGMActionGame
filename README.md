@@ -38,6 +38,10 @@
 
 애니메이션 노타파이 활용
 
+<img width="1279" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/f9b89add-f118-4e47-b8d1-75aa5bc4b847">
+
+적 캐릭터 AI 비헤이비어 트리
+
 <img width="1157" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/356fe939-74c3-491a-b73f-a01c459f4774">
 
 클로딩 툴 활용 클로스 페인트 작업
