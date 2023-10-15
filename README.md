@@ -25,9 +25,19 @@
 <img width="454" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/5179cdd0-af8e-486d-9eb9-e5f939f80e66">
 <img width="915" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/450a4045-970f-4944-854d-26f88656215b">
 <img width="308" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/3faf0326-9bc8-458e-812f-31cf9e76a6ba">
+
 애니메이션 블루프린트 템플릿 활용
 
 <img width="1151" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/455c2d37-08ce-4817-add0-d396676dbef5">
+
 애니메이션 노타파이 활용
+
+<img width="1913" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/874b5ed4-d9ab-4bde-89dc-75fb8328d71f">
+
+Blender 3.5를 활용한 메시 수정 및 머티리얼 수정
+
+<img width="1918" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/f9e7c035-35c7-4c03-9fe1-00d79dabe383">
+
+3DS Max 2024 활용 애니메이션 수정 및 루트 본 추가
 
 ### 제작 기간 : 23.09.12 ~ 23.10.XX (개발 중)
