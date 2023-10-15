@@ -19,4 +19,15 @@
 - 외부 라이브러리 RM Fix Tool을 활용한 루트 애니메이션의 수정(Root 본의 위치 수정)
 - 3DS Max 2024와 Blender 3.5를 활용한 메시와 애니메이션의 수정
 
+## 기술 스크린 샷
+
+<img width="449" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/2adb9868-1c06-48d9-baa3-6c410776f8a6">
+<img width="454" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/5179cdd0-af8e-486d-9eb9-e5f939f80e66">
+<img width="915" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/450a4045-970f-4944-854d-26f88656215b">
+<img width="308" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/3faf0326-9bc8-458e-812f-31cf9e76a6ba">
+애니메이션 블루프린트 템플릿 활용
+
+<img width="1151" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/455c2d37-08ce-4817-add0-d396676dbef5">
+애니메이션 노타파이 활용
+
 ### 제작 기간 : 23.09.12 ~ 23.10.XX (개발 중)
