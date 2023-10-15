@@ -32,6 +32,10 @@
 
 애니메이션 노타파이 활용
 
+<img width="1157" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/356fe939-74c3-491a-b73f-a01c459f4774">
+
+클로딩 툴 활용 클로스 페인트 작업
+
 <img width="1913" alt="image" src="https://github.com/huzi2/UnrealPortfolio-YGMActionGame/assets/31639085/874b5ed4-d9ab-4bde-89dc-75fb8328d71f">
 
 Blender 3.5를 활용한 메시 수정 및 머티리얼 수정
