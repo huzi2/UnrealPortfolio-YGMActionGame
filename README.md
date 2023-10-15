@@ -4,7 +4,9 @@
 
 ## 프로젝트 영상
 
-[![Video Label](http://img.youtube.com/vi/9AO-G4ecnsI/0.jpg)]
+![Video Label](http://img.youtube.com/vi/9AO-G4ecnsI/0.jpg)
+
+콤보 공격 및 적 AI 구현(https://youtu.be/9AO-G4ecnsI)
 
 ## 프로젝트 개요
 언리얼 5.3 C++을 활용한 3인칭 액션 게임
