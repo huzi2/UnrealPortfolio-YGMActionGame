@@ -12,6 +12,7 @@
 언리얼 5.3 C++을 활용한 3인칭 액션 게임
 
 ## 사용 기술
+- [래그돌](https://github.com/huzi2/UnrealPortfolio-YGMActionGame/wiki/%EA%B2%8C%EC%9E%84-%EB%A1%9C%EC%A7%81#%EB%9E%98%EA%B7%B8%EB%8F%8C)
 - 향상된 입력(Enhanced Input)
 - Json, XML 파일의 파싱
 - 비헤이비어 트리, 블랙보드를 활용한 AI 구현
