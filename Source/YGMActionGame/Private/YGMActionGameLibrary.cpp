@@ -64,9 +64,14 @@ float UYGMActionGameLibrary::GetMovementDirection(const FVector& Velocity, const
 	if (Velocity.IsZero()) return 0.f;
 
 	const FVector VelocityNormal = Velocity.GetSafeNormal();
+	// 객체의 방향과 정규화된 속도 벡터 간의 내적을 계산한 후, 그 결과를 사용해 두 벡터 간의 각도를 얻음
 	const float AngleBetween = FMath::Acos(FVector::DotProduct(Forward, VelocityNormal));
+	// 객체의 방향과 정규화된 속도 벡터의 외적을 계산. 이를 통해 두 벡터가 형성하는 평면의 수직 벡터를 얻음
 	const FVector CrossProduct = FVector::CrossProduct(Forward, VelocityNormal);
+	// 두 벡터 간의 각도를 라디안에서 도로 변환
 	const float Degree = FMath::RadiansToDegrees(AngleBetween);
+	// 만약 외적의 결과가 0이면 (즉, 두 벡터가 서로 평행하면) 두 벡터 간의 각도를 그대로 반환
+	// 그렇지 않으면 외적의 Z 컴포넌트의 부호에 따라 각도의 부호를 결정
 	return CrossProduct.IsZero() ? Degree : Degree * FMath::Sign(CrossProduct.Z);
 }
 

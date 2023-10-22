@@ -106,7 +106,7 @@ void AEnemyCharacter::CheckNextState()
 		return;
 	}
 
-	const float DistanceToTarget = UYGMActionGameLibrary::GetDistance(TargetActor->GetActorLocation(), GetActorLocation());
+	const float DistanceToTarget = UYGMActionGameLibrary::GetDistance(GetActorLocation(), TargetActor->GetActorLocation());
 
 	// 적이 인식 거리 밖이면 타겟 해제 후 Idle
 	if (DistanceToTarget > SightRange)
