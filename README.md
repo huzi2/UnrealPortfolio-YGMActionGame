@@ -4,7 +4,7 @@
 
 ![Video Label](http://img.youtube.com/vi/9AO-G4ecnsI/0.jpg)
 
-[프로젝트 영상](https://youtu.be/9AO-G4ecnsI)
+- [프로젝트 영상](https://youtu.be/9AO-G4ecnsI)
 
 ## 프로젝트 개요
 
